@@ -31,9 +31,8 @@
   .mono { font-family: 'IBM Plex Mono', monospace; }
 
   /* NAV */
-  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 22px 32px; mix-blend-mode: difference; }
-  @media (max-width: 640px) { nav { padding: 18px 20px; } }
-  .brand { font-weight: 600; font-size: 17px; letter-spacing: 3px; text-decoration: none; color: #fff; text-transform: uppercase; }
+  .brand { font-weight: 600; letter-spacing: 3px; text-decoration: none; color: #fff; text-transform: uppercase; }
+  .hero-brand { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: clamp(28px, 5vw, 48px); letter-spacing: 8px; z-index: 2; }
   .nav-cta { font-size: 13px; letter-spacing: 1px; text-decoration: none; color: #fff; }
 
   /* HERO SLIDESHOW */
@@ -42,9 +41,10 @@
   .hero-slide.active { opacity: 1; }
   .hero-slide img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.75) contrast(1.05); }
   .hero-slide::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.4) 100%); }
-  .hero-scrolldown { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.85; z-index: 2; }
+  .hero-scrolldown { position: absolute; bottom: 28px; left: 32px; color: #fff; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.85; z-index: 2; }
+  .hero-booking-link { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 13px; letter-spacing: 1px; text-decoration: none; z-index: 2; }
   .hero-dots { position: absolute; bottom: 28px; right: 32px; display: flex; gap: 8px; z-index: 2; }
-  @media (max-width: 640px) { .hero-dots { right: 20px; } }
+  @media (max-width: 640px) { .hero-dots { right: 20px; } .hero-scrolldown { left: 20px; } }
   .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); cursor: pointer; transition: background 0.2s; }
   .hero-dot.active { background: #fff; }
 
@@ -161,17 +161,14 @@
 </head>
 <body>
 
-<nav>
-  <a href="#" class="brand">вне шума</a>
-  <a href="#booking" class="nav-cta">бронирование</a>
-</nav>
-
 <!-- HERO: полноэкранное слайд-шоу, без подписей -->
 <div class="hero-slideshow" id="heroSlides">
   <div class="hero-slide active"><img src="https://picsum.photos/id/110/1800/2200" alt=""></div>
   <div class="hero-slide"><img src="https://picsum.photos/id/10/1800/2200" alt=""></div>
   <div class="hero-slide"><img src="https://picsum.photos/id/1039/1800/2200" alt=""></div>
   <div class="hero-slide"><img src="https://picsum.photos/id/28/1800/2200" alt=""></div>
+  <a href="#" class="brand hero-brand">вне шума</a>
+  <a href="#booking" class="hero-booking-link">бронирование</a>
   <div class="hero-scrolldown">Казань → Марий Эл</div>
   <div class="hero-dots" id="heroDots"></div>
 </div>
@@ -234,7 +231,7 @@
           <h3>физический прогресс в Telegram-боте</h3>
           <p>Каждый пройденный маршрут — штамп в паспорте. Следующий уровень открывается только после предыдущего.</p>
         </div>
-        <a href="https://t.me/vneshuma_bot" class="btn btn-outline" target="_blank" rel="noopener">открыть бота →</a>
+        <a href="https://t.me/Talgat_Shakirov" class="btn btn-outline" target="_blank" rel="noopener">написать оператору →</a>
       </div>
     </div>
   </section>
@@ -329,112 +326,38 @@
 
       <form id="bookingForm">
 
-        <div class="field-group">
-          <div class="field-group-title">твои контакты</div>
-          <div class="row-2">
-            <div class="field"><label>имя</label><input type="text" name="name" required></div>
-            <div class="field"><label>телефон</label><input type="tel" name="phone" placeholder="+7 999 000 00 00" required></div>
-          </div>
-          <div class="row-2">
-            <div class="field"><label>email (необязательно)</label><input type="email" name="email"></div>
-            <div class="field"><label>мессенджер</label>
-              <select name="messenger"><option>whatsapp</option><option>telegram</option><option>звонок</option></select>
-            </div>
-          </div>
+        <div class="row-2">
+          <div class="field"><label>имя</label><input type="text" name="name" required></div>
+          <div class="field"><label>телефон</label><input type="tel" name="phone" placeholder="+7 999 000 00 00" required></div>
         </div>
 
-        <div class="field-group">
-          <div class="field-group-title">маршрут и даты</div>
-          <div class="field">
-            <label>маршрут</label>
-            <select name="route" id="route">
-              <option value="">ещё не выбрал — подскажите</option>
-              <optgroup label="паспорт сложности">
-                <option value="Мушан-ер · лёгкий · 55 км">Мушан-ер · лёгкий · 55 км</option>
-                <option value="Серебряное · средний · 80 км">Серебряное · средний · 80 км</option>
-                <option value="Таир · сложный · 94 км">Таир · сложный · 94 км</option>
-              </optgroup>
-              <optgroup label="полный каталог">
-                <option value="Свияжск и альпаки · 1 день" data-price="15000">Свияжск и альпаки · 1 день</option>
-                <option value="Храм всех религий и Верхний Услон · 1 день" data-price="15000">Храм всех религий и Верхний Услон · 1 день</option>
-                <option value="Камское Устье и гора Лобач · 2 дня" data-price="29000">Камское Устье и гора Лобач · 2 дня</option>
-                <option value="Семрук и Камское море · 2 дня" data-price="29000">Семрук и Камское море · 2 дня</option>
-                <option value="Голубые озёра и Елабуга · 3 дня" data-price="43000">Голубые озёра и Елабуга · 3 дня</option>
-                <option value="Волжская Булгария · 5 дней" data-price="70000">Волжская Булгария · 5 дней</option>
-                <option value="Марийская тайга · 7 дней" data-price="89000">Марийская тайга · 7 дней</option>
-                <option value="Гранд-тур по Башкирии · 14 дней" data-price="199000">Гранд-тур по Башкирии · 14 дней</option>
-              </optgroup>
-            </select>
-          </div>
-          <div class="row-2">
-            <div class="field"><label>дата начала</label><input type="date" name="dateStart" id="dateStart" required></div>
-            <div class="field"><label>дата окончания</label><input type="date" name="dateEnd" id="dateEnd" required></div>
-          </div>
-          <div class="row-2">
-            <div class="field"><label>путешественники</label>
-              <select name="pax"><option>1 взрослый</option><option selected>2 взрослых</option><option>2 взрослых + 1 ребёнок</option><option>2 взрослых + 2 детей</option></select>
-            </div>
-            <div class="field"><label>опыт вождения внедорожника</label>
-              <select name="exp"><option>первый раз</option><option>уже водил джип</option><option>опытный оффроадер</option></select>
-            </div>
-          </div>
+        <div class="field">
+          <label>маршрут</label>
+          <select name="route" id="route">
+            <option value="">ещё не выбрал — подскажите</option>
+            <optgroup label="паспорт сложности">
+              <option value="Мушан-ер · лёгкий · 55 км">Мушан-ер · лёгкий · 55 км</option>
+              <option value="Серебряное · средний · 80 км">Серебряное · средний · 80 км</option>
+              <option value="Таир · сложный · 94 км">Таир · сложный · 94 км</option>
+            </optgroup>
+            <optgroup label="полный каталог">
+              <option value="Свияжск и альпаки · 1 день">Свияжск и альпаки · 1 день</option>
+              <option value="Храм всех религий и Верхний Услон · 1 день">Храм всех религий и Верхний Услон · 1 день</option>
+              <option value="Камское Устье и гора Лобач · 2 дня">Камское Устье и гора Лобач · 2 дня</option>
+              <option value="Семрук и Камское море · 2 дня">Семрук и Камское море · 2 дня</option>
+              <option value="Голубые озёра и Елабуга · 3 дня">Голубые озёра и Елабуга · 3 дня</option>
+              <option value="Волжская Булгария · 5 дней">Волжская Булгария · 5 дней</option>
+              <option value="Марийская тайга · 7 дней">Марийская тайга · 7 дней</option>
+              <option value="Гранд-тур по Башкирии · 14 дней">Гранд-тур по Башкирии · 14 дней</option>
+            </optgroup>
+          </select>
         </div>
 
-        <div class="field-group">
-          <div class="field-group-title">доп-опции</div>
-          <div class="chk-list">
-            <label class="chk"><input type="checkbox" name="extras" value="Wi-Fi роутер 4G/5G" data-price="400"><span class="lbl">Wi-Fi роутер 4G/5G</span><span class="price mono">400 ₽/день</span></label>
-            <label class="chk"><input type="checkbox" name="extras" value="Видеорегистратор с GPS" data-price="600"><span class="lbl">Видеорегистратор с GPS</span><span class="price mono">600 ₽</span></label>
-            <label class="chk"><input type="checkbox" name="extras" value="Дизельный обогреватель палатки" data-price="3500"><span class="lbl">Дизельный обогреватель палатки</span><span class="price mono">3 500 ₽</span></label>
-            <label class="chk"><input type="checkbox" name="extras" value="Портативный генератор" data-price="1800"><span class="lbl">Портативный генератор</span><span class="price mono">1 800 ₽</span></label>
-            <label class="chk"><input type="checkbox" name="extras" value="Наземная палатка двухместная" data-price="2200"><span class="lbl">Наземная палатка двухместная</span><span class="price mono">2 200 ₽/ночь</span></label>
-            <label class="chk"><input type="checkbox" name="extras" value="Боковая маркиза (awning)" data-price="1000"><span class="lbl">Боковая маркиза (awning)</span><span class="price mono">1 000 ₽</span></label>
-            <label class="chk"><input type="checkbox" name="extras" value="Туристическая баня-палатка" data-price="3500"><span class="lbl">Туристическая баня-палатка</span><span class="price mono">3 500 ₽</span></label>
-            <label class="chk"><input type="checkbox" name="extras" value="SUP-борд надувной" data-price="2000"><span class="lbl">SUP-борд надувной</span><span class="price mono">2 000 ₽</span></label>
-            <label class="chk"><input type="checkbox" name="extras" value="Детское автокресло" data-price="500"><span class="lbl">Детское автокресло</span><span class="price mono">500 ₽</span></label>
+        <div class="row-2">
+          <div class="field"><label>даты поездки</label><input type="text" name="dates" placeholder="например, 12–13 сентября" required></div>
+          <div class="field"><label>путешественники</label>
+            <select name="pax"><option>1 взрослый</option><option selected>2 взрослых</option><option>2 взрослых + 1 ребёнок</option><option>2 взрослых + 2 детей</option></select>
           </div>
-        </div>
-
-        <div class="field-group">
-          <div class="field-group-title">food menu</div>
-          <div class="chk-list">
-            <label class="chk"><input type="checkbox" name="food" value="Шашлык куриный" data-price="1800"><span class="lbl">Шашлык куриный (2 персоны)</span><span class="price mono">1 800 ₽</span></label>
-            <label class="chk"><input type="checkbox" name="food" value="Шашлык говяжий" data-price="2600"><span class="lbl">Шашлык говяжий (2 персоны)</span><span class="price mono">2 600 ₽</span></label>
-            <label class="chk"><input type="checkbox" name="food" value="Говяжий стейк" data-price="3200"><span class="lbl">Говяжий стейк (2 персоны)</span><span class="price mono">3 200 ₽</span></label>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <div class="field-group-title">эксклюзивный доступ</div>
-          <p style="font-size:13px;color:var(--ink-soft);margin-bottom:16px;">закрытые локации по договорённости с фермерами и егерями — без соседей, без толп</p>
-          <div class="chk-list">
-            <label class="chk"><input type="checkbox" name="exclusive" value="Партнёрский глэмпинг «Голубые озёра»" data-price="4500"><span class="lbl">Партнёрский глэмпинг «Голубые озёра» (1 ночь + баня)</span><span class="price mono">4 500 ₽</span></label>
-            <label class="chk"><input type="checkbox" name="exclusive" value="Приватный тур в Юрьевскую пещеру" data-price="6000"><span class="lbl">Приватный тур в Юрьевскую пещеру с гидом</span><span class="price mono">6 000 ₽</span></label>
-            <label class="chk"><input type="checkbox" name="exclusive" value="Ночь на пасеке Иремеля" data-price="15000"><span class="lbl">Ночь на пасеке Иремеля · мёд, баня, кумыс</span><span class="price mono">15 000 ₽</span></label>
-            <label class="chk"><input type="checkbox" name="exclusive" value="Рассвет на закрытой смотровой Торатау" data-price="5000"><span class="lbl">Рассвет на закрытой смотровой Торатау</span><span class="price mono">5 000 ₽</span></label>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <div class="field-group-title">страховка</div>
-          <div class="rsv-info" style="font-size:13px;color:var(--ink-soft);margin-bottom:14px;">КАСКО + ОСАГО уже включены в цену. Расширенное покрытие снимает франшизу при мелких повреждениях.</div>
-          <div class="radio-row">
-            <label class="radio"><input type="radio" name="insurance" value="Расширенное покрытие (+500 ₽/день)" checked><span>расширенное (+500 ₽/день)</span></label>
-            <label class="radio"><input type="radio" name="insurance" value="Стандартное КАСКО+ОСАГО"><span>стандартное</span></label>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <div class="field-group-title">комментарий</div>
-          <textarea name="comment" placeholder="пожелания, вопросы, особенности маршрута..."></textarea>
-        </div>
-
-        <div class="total-strip">
-          <div>
-            <div class="total-lbl">предварительная стоимость</div>
-            <div class="total-note">окончательная — согласовывается в переписке</div>
-          </div>
-          <div class="total-val mono" id="totalPrice">—</div>
         </div>
 
         <button type="submit" class="btn btn-primary">отправить заявку →</button>
@@ -448,7 +371,7 @@
   <div class="wrap footer-inner">
     <span>© 2026 вне шума · Казань · vneshuma.ru</span>
     <div class="footer-links">
-      <a href="https://t.me/vneshuma_bot" target="_blank" rel="noopener">telegram</a>
+      <a href="https://t.me/Talgat_Shakirov" target="_blank" rel="noopener">telegram</a>
       <a href="https://wa.me/79297250006" target="_blank" rel="noopener">whatsapp</a>
     </div>
   </div>
@@ -476,35 +399,37 @@
     setInterval(() => show((idx + 1) % slides.length), 5500);
   })();
 
-  // Расчёт итоговой стоимости
-  function calcTotal() {
-    const routeSel = document.getElementById('route');
-    const opt = routeSel.options[routeSel.selectedIndex];
-    let total = parseInt(opt?.dataset.price || '0');
-    document.querySelectorAll('input[name=extras]:checked, input[name=food]:checked, input[name=exclusive]:checked').forEach(cb => {
-      total += parseInt(cb.dataset.price || '0');
-    });
-    const insVal = document.querySelector('input[name=insurance]:checked')?.value || '';
-    if (insVal.includes('Расширенное')) {
-      const ds = document.getElementById('dateStart').value;
-      const de = document.getElementById('dateEnd').value;
-      if (ds && de) {
-        const days = Math.max(1, Math.round((new Date(de) - new Date(ds)) / 86400000));
-        total += days * 500;
-      }
-    }
-    document.getElementById('totalPrice').textContent = total > 0 ? total.toLocaleString('ru-RU') + ' ₽' : '—';
-  }
-  document.getElementById('bookingForm').addEventListener('change', calcTotal);
-  document.getElementById('bookingForm').addEventListener('input', calcTotal);
-
   // Отправка заявки — на серверную функцию (токен бота не хранится на сайте)
   const API_URL = '/.netlify/functions/create-booking';
+  const CHECK_URL = '/.netlify/functions/check-start';
+  const BOT_USERNAME = 'vneshuma_bot';
 
   function makeBookingId() {
     const t = Date.now().toString(36).toUpperCase();
     const r = Math.random().toString(36).slice(2, 6).toUpperCase();
     return `BID${t}${r}`;
+  }
+
+  // Пытаемся получить клиенту копию заявки в Telegram: открываем бота с deep-link'ом
+  // /start <bookingId> и в фоне спрашиваем сервер, не написал ли клиент боту —
+  // как только напишет, серверная функция сама пришлёт ему копию.
+  async function pollForClientCopy(bookingId, message, status) {
+    const deadline = Date.now() + 60000;
+    while (Date.now() < deadline) {
+      await new Promise(r => setTimeout(r, 2500));
+      try {
+        const res = await fetch(CHECK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ bookingId, message })
+        });
+        const data = await res.json();
+        if (data.found) {
+          status.textContent = 'Заявка отправлена. Копия пришла вам в Telegram.';
+          return;
+        }
+      } catch (err) { /* тихо пробуем ещё раз */ }
+    }
   }
 
   document.getElementById('bookingForm').addEventListener('submit', async function (e) {
@@ -513,26 +438,17 @@
     const status = document.getElementById('bookingStatus');
     const bookingId = makeBookingId();
     const data = new FormData(form);
-    const extras = [...form.querySelectorAll('input[name=extras]:checked')].map(c => c.value);
-    const food = [...form.querySelectorAll('input[name=food]:checked')].map(c => c.value);
-    const exclusive = [...form.querySelectorAll('input[name=exclusive]:checked')].map(c => c.value);
-    const total = document.getElementById('totalPrice').textContent;
 
     let message = 'ЗАЯВКА · вне шума\n────────────────────────\n\n';
     message += `имя: ${data.get('name')}\n`;
     message += `телефон: ${data.get('phone')}\n`;
-    if (data.get('email')) message += `email: ${data.get('email')}\n`;
-    message += `связь: ${data.get('messenger')}\n\n`;
     message += `маршрут: ${data.get('route') || '—'}\n`;
-    message += `даты: ${data.get('dateStart')} → ${data.get('dateEnd')}\n`;
-    message += `состав: ${data.get('pax')} · опыт: ${data.get('exp')}\n\n`;
-    if (extras.length) message += `доп-опции:\n${extras.map(x => '  — ' + x).join('\n')}\n\n`;
-    if (food.length) message += `еда:\n${food.map(x => '  — ' + x).join('\n')}\n\n`;
-    if (exclusive.length) message += `эксклюзив:\n${exclusive.map(x => '  — ' + x).join('\n')}\n\n`;
-    message += `страховка: ${data.get('insurance')}\n`;
-    if (data.get('comment')) message += `комментарий: ${data.get('comment')}\n`;
-    message += `\n────────────────────────\nпредварительно: ${total}\nID: ${bookingId}`;
+    message += `даты: ${data.get('dates')}\n`;
+    message += `путешественники: ${data.get('pax')}\n`;
+    message += `\n────────────────────────\nID: ${bookingId}`;
 
+    const submitBtn = form.querySelector('button[type=submit]');
+    submitBtn.disabled = true;
     status.textContent = 'отправляем…';
     try {
       const res = await fetch(API_URL, {
@@ -541,11 +457,16 @@
         body: JSON.stringify({ message, bookingId })
       });
       if (!res.ok) throw new Error('server error');
-      status.textContent = 'Заявка отправлена — мы свяжемся в течение 15 минут.';
+      status.innerHTML = 'Заявка отправлена — мы свяжемся в течение 15 минут. ' +
+        `<a href="https://t.me/${BOT_USERNAME}?start=${bookingId}" target="_blank" rel="noopener">получить копию в Telegram →</a>`;
       form.reset();
-      calcTotal();
+      pollForClientCopy(bookingId, message, status);
     } catch (err) {
-      status.textContent = 'Не удалось отправить автоматически. Напиши нам напрямую: t.me/vneshuma_bot';
+      status.innerHTML = 'Не удалось отправить автоматически. Напиши нам напрямую: ' +
+        '<a href="https://wa.me/79297250006" target="_blank" rel="noopener">WhatsApp</a> или ' +
+        '<a href="https://t.me/Talgat_Shakirov" target="_blank" rel="noopener">Telegram</a>';
+    } finally {
+      submitBtn.disabled = false;
     }
   });
 </script>
