@@ -40,8 +40,8 @@
   .hero-slideshow { position: relative; width: 100%; height: 100svh; overflow: hidden; background: #0A0A0A; }
   .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.6s ease; }
   .hero-slide.active { opacity: 1; }
-  .hero-slide img { width: 100%; height: 100%; object-fit: cover; }
-  .hero-slide::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.35) 100%); }
+  .hero-slide img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.75) contrast(1.05); }
+  .hero-slide::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.4) 100%); }
   .hero-scrolldown { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.85; z-index: 2; }
   .hero-dots { position: absolute; bottom: 28px; right: 32px; display: flex; gap: 8px; z-index: 2; }
   @media (max-width: 640px) { .hero-dots { right: 20px; } }
@@ -61,8 +61,9 @@
   .btn-outline:hover { background: var(--ink); color: var(--bg); }
 
   /* FULL-BLEED BREAK PHOTO */
-  .break-photo { width: 100%; height: 62vh; overflow: hidden; }
-  .break-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .break-photo { width: 100%; height: 62vh; overflow: hidden; position: relative; }
+  .break-photo img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.75) contrast(1.05); }
+  .break-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.4) 100%); }
 
   /* SECTION HEAD */
   .section-head { padding: 90px 0 44px; text-align: center; }
@@ -74,9 +75,9 @@
   .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
   @media (max-width: 860px) { .tiles { grid-template-columns: 1fr; } }
   .tile { position: relative; aspect-ratio: 3/4; overflow: hidden; text-decoration: none; display: block; cursor: pointer; }
-  .tile img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+  .tile img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; filter: saturate(0.75) contrast(1.05); }
   .tile:hover img { transform: scale(1.04); }
-  .tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.05) 45%, transparent 70%); }
+  .tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0.22) 100%); }
   .tile-body { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px; color: #fff; z-index: 1; }
   .tile-level { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.85; margin-bottom: 8px; display: block; }
   .tile-body h3 { font-size: 24px; margin-bottom: 6px; }
@@ -167,8 +168,8 @@
 
 <!-- HERO: полноэкранное слайд-шоу, без подписей -->
 <div class="hero-slideshow" id="heroSlides">
-  <div class="hero-slide active"><img src="https://picsum.photos/id/1018/1800/2200" alt=""></div>
-  <div class="hero-slide"><img src="https://picsum.photos/id/1015/1800/2200" alt=""></div>
+  <div class="hero-slide active"><img src="https://picsum.photos/id/110/1800/2200" alt=""></div>
+  <div class="hero-slide"><img src="https://picsum.photos/id/10/1800/2200" alt=""></div>
   <div class="hero-slide"><img src="https://picsum.photos/id/1039/1800/2200" alt=""></div>
   <div class="hero-slide"><img src="https://picsum.photos/id/28/1800/2200" alt=""></div>
   <div class="hero-scrolldown">Казань → Марий Эл</div>
@@ -199,7 +200,7 @@
 
     <div class="tiles">
       <a href="#booking" class="tile">
-        <img src="https://picsum.photos/id/1043/900/1200" alt="Мушан-ер">
+        <img src="https://picsum.photos/id/190/900/1200" alt="Мушан-ер">
         <div class="tile-dist mono">55 км</div>
         <div class="tile-body">
           <span class="tile-level mono">уровень 1 · лёгкий</span>
@@ -208,7 +209,7 @@
         </div>
       </a>
       <a href="#booking" class="tile">
-        <img src="https://picsum.photos/id/177/900/1200" alt="Серебряное">
+        <img src="https://picsum.photos/id/187/900/1200" alt="Серебряное">
         <div class="tile-dist mono">80 км</div>
         <div class="tile-body">
           <span class="tile-level mono">уровень 2 · средний</span>
@@ -291,7 +292,7 @@
     </div>
   </section>
 
-  <div class="break-photo"><img src="https://picsum.photos/id/1057/2000/1200" alt=""></div>
+  <div class="break-photo"><img src="https://picsum.photos/id/16/2000/1200" alt=""></div>
 
   <!-- БЕЗОПАСНОСТЬ — короткий список, без таблицы -->
   <section class="safety">
