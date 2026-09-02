@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root {
     --bg: #FFFFFF;
@@ -41,10 +43,9 @@
   .hero-slide.active { opacity: 1; }
   .hero-slide img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.75) contrast(1.05); }
   .hero-slide::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.4) 100%); }
-  .hero-scrolldown { position: absolute; bottom: 28px; left: 32px; color: #fff; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.85; z-index: 2; }
   .hero-booking-link { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 13px; letter-spacing: 1px; text-decoration: none; z-index: 2; }
   .hero-dots { position: absolute; bottom: 28px; right: 32px; display: flex; gap: 8px; z-index: 2; }
-  @media (max-width: 640px) { .hero-dots { right: 20px; } .hero-scrolldown { left: 20px; } }
+  @media (max-width: 640px) { .hero-dots { right: 20px; } }
   .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); cursor: pointer; transition: background 0.2s; }
   .hero-dot.active { background: #fff; }
 
@@ -101,20 +102,6 @@
   .cat-price { font-size: 15px; white-space: nowrap; }
   @media (max-width: 700px) { .cat-price { margin-top: 6px; } }
 
-  /* SAFETY — short list, no table */
-  .safety { padding: 90px 0; background: var(--ink); color: #fff; }
-  .safety .section-head .eyebrow, .safety .section-head p { color: rgba(255,255,255,0.6); }
-  .safety-list { max-width: 640px; margin: 0 auto; }
-  .safety-item { display: flex; gap: 20px; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.18); font-size: 15px; }
-  .safety-list .safety-item:last-child { border-bottom: 1px solid rgba(255,255,255,0.18); }
-  .safety-item span.mark { color: rgba(255,255,255,0.4); font-size: 13px; width: 24px; flex-shrink: 0; }
-
-  /* CONTACT / FOUNDER STRIP */
-  .founder { padding: 90px 0; text-align: center; }
-  .founder p { max-width: 640px; margin: 0 auto 28px; color: var(--ink-soft); font-size: 15px; }
-  .founder-sign { font-size: 14px; letter-spacing: 1px; }
-  .founder-sign span { color: var(--ink-soft); display: block; margin-top: 4px; font-size: 13px; }
-
   /* BOOKING */
   .booking { padding: 100px 0; border-top: 1px solid var(--line); }
   .booking-inner { max-width: 640px; margin: 0 auto; }
@@ -157,6 +144,27 @@
   .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; font-size: 14px; color: var(--ink-soft); }
   .footer-links { display: flex; gap: 20px; }
   .footer-links a { text-decoration: none; border-bottom: 1px solid var(--line); }
+
+  /* MODAL — детализация маршрута */
+  .tile, .cat-row { cursor: pointer; }
+  .modal-overlay { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(10,10,10,0.85); padding: 24px; overflow-y: auto; }
+  .modal-overlay.open { display: block; }
+  .modal { max-width: 780px; margin: 40px auto; background: var(--bg); border: 1px solid var(--line-strong); }
+  .modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; padding: 28px 28px 20px; border-bottom: 1px solid var(--line); }
+  .modal-head h3 { font-size: 24px; margin-bottom: 6px; }
+  .modal-tagline { color: var(--ink-soft); font-size: 14px; }
+  .modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--ink); line-height: 1; padding: 4px; }
+  .modal-meta { display: flex; gap: 28px; padding: 18px 28px; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .modal-meta div strong { display: block; font-size: 16px; }
+  .modal-map { width: 100%; height: 320px; }
+  .modal-points { padding: 8px 28px 28px; }
+  .modal-point { padding: 16px 0; border-top: 1px solid var(--line); }
+  .modal-point-head { display: flex; gap: 10px; align-items: baseline; margin-bottom: 6px; }
+  .modal-point-num { font-size: 12px; color: var(--ink-soft); mono: 1; }
+  .modal-point-name { font-weight: 600; }
+  .modal-point-info { font-size: 14px; color: var(--ink-soft); margin-bottom: 4px; }
+  .modal-point-tip { font-size: 13px; color: var(--ink-soft); font-style: italic; }
+  .modal-note { padding: 20px 28px; font-size: 14px; color: var(--ink-soft); }
 </style>
 </head>
 <body>
@@ -169,7 +177,6 @@
   <div class="hero-slide"><img src="https://picsum.photos/id/28/1800/2200" alt=""></div>
   <a href="#" class="brand hero-brand">вне шума</a>
   <a href="#booking" class="hero-booking-link">бронирование</a>
-  <div class="hero-scrolldown">Казань → Марий Эл</div>
   <div class="hero-dots" id="heroDots"></div>
 </div>
 
@@ -196,7 +203,7 @@
     </div>
 
     <div class="tiles">
-      <a href="#booking" class="tile">
+      <a href="javascript:void(0)" class="tile" onclick="openRoute('mushan-er')">
         <img src="https://picsum.photos/id/329/900/1200" alt="Мушан-ер">
         <div class="tile-dist mono">55 км</div>
         <div class="tile-body">
@@ -205,7 +212,7 @@
           <p>Шлагбаум останавливает машину за километр до озера — дальше пешком, среди сосен, к чистой воде с песчаным дном.</p>
         </div>
       </a>
-      <a href="#booking" class="tile">
+      <a href="javascript:void(0)" class="tile" onclick="openRoute('serebryanoe')">
         <img src="https://picsum.photos/id/187/900/1200" alt="Серебряное">
         <div class="tile-dist mono">80 км</div>
         <div class="tile-body">
@@ -214,7 +221,7 @@
           <p>Песчаные дюны и сосновый бор. Оставляешь машину у кромки леса и уходишь исследовать берег сам.</p>
         </div>
       </a>
-      <a href="#booking" class="tile">
+      <a href="javascript:void(0)" class="tile" onclick="openRoute('tair')">
         <img src="https://picsum.photos/id/1042/900/1200" alt="Таир">
         <div class="tile-dist mono">94 км</div>
         <div class="tile-body">
@@ -245,77 +252,48 @@
     </div>
     <div class="wrap">
       <div class="catalog">
-        <div class="cat-row">
+        <div class="cat-row" onclick="openRoute('sviyazhsk')">
           <div class="cat-days mono">1 день</div>
           <div class="cat-mid"><h4>Свияжск и альпаки</h4><p>Иннополис, остров-град Свияжск (ЮНЕСКО), ферма альпак в Исаково. Вечер у Свияги.</p></div>
           <div class="cat-price mono">15 000 ₽</div>
         </div>
-        <div class="cat-row">
+        <div class="cat-row" onclick="openRoute('hram')">
           <div class="cat-days mono">1 день</div>
           <div class="cat-mid"><h4>Храм всех религий и Верхний Услон</h4><p>Храм всех религий, Раифа, ночёвка на горе Услон с видом на Казань, возврат на пароме.</p></div>
           <div class="cat-price mono">15 000 ₽</div>
         </div>
-        <div class="cat-row">
+        <div class="cat-row" onclick="openRoute('kamskoe-ustie')">
           <div class="cat-days mono">2 дня</div>
           <div class="cat-mid"><h4>Камское Устье и гора Лобач</h4><p>Скалы 100 метров над Волгой, Юрьевская пещера, гипсовые карьеры, Лобач.</p></div>
           <div class="cat-price mono">29 000 ₽</div>
         </div>
-        <div class="cat-row">
+        <div class="cat-row" onclick="openRoute('semruk')">
           <div class="cat-days mono">2 дня</div>
           <div class="cat-mid"><h4>Семрук и Камское море</h4><p>Лаишево, декорации «Семрука» из фильма «Зулейха открывает глаза», Камское море.</p></div>
           <div class="cat-price mono">29 000 ₽</div>
         </div>
-        <div class="cat-row">
+        <div class="cat-row" onclick="openRoute('golubye-ozera')">
           <div class="cat-days mono">3 дня</div>
           <div class="cat-mid"><h4>Голубые озёра и Елабуга</h4><p>Карстовое озеро, Елабуга, Чёртово городище, дом-музей Марины Цветаевой.</p></div>
           <div class="cat-price mono">43 000 ₽</div>
         </div>
-        <div class="cat-row">
+        <div class="cat-row" onclick="openRoute('bulgaria')">
           <div class="cat-days mono">5 дней</div>
           <div class="cat-mid"><h4>Волжская Булгария</h4><p>Болгары (ЮНЕСКО), Билярск, Чистополь, Ундоры, Ульяновск.</p></div>
           <div class="cat-price mono">70 000 ₽</div>
         </div>
-        <div class="cat-row">
+        <div class="cat-row" onclick="openRoute('mari-taiga')">
           <div class="cat-days mono">7 дней</div>
           <div class="cat-mid"><h4>Марийская тайга</h4><p>Марий Чодра, четыре карстовых озера, Суслонгер, Йошкар-Ола, Козьмодемьянск.</p></div>
           <div class="cat-price mono">89 000 ₽</div>
         </div>
-        <div class="cat-row">
+        <div class="cat-row" onclick="openRoute('bashkiria')">
           <div class="cat-days mono">14 дней</div>
           <div class="cat-mid"><h4>Гранд-тур по Башкирии</h4><p>Две недели в горах: 15 точек — от Святых кустиков до шихана Торатау.</p></div>
           <div class="cat-price mono">199 000 ₽</div>
         </div>
       </div>
     </div>
-  </section>
-
-  <div class="break-photo"><img src="photos/hero-main.png" alt="Suzuki Jimny с палаткой на крыше"></div>
-
-  <!-- БЕЗОПАСНОСТЬ — короткий список, без таблицы -->
-  <section class="safety">
-    <div class="section-head wrap">
-      <div class="eyebrow">на всякий случай</div>
-      <h2>восемь слоёв заботы</h2>
-      <p>Первый раз в дороге? Именно для этого мы всё и продумали.</p>
-    </div>
-    <div class="wrap">
-      <div class="safety-list">
-        <div class="safety-item"><span class="mark mono">01</span><span>КАСКО + ОСАГО уже включены в цену — без вопросов о франшизе</span></div>
-        <div class="safety-item"><span class="mark mono">02</span><span>GPS-трекер на машине — онлайн 24/7</span></div>
-        <div class="safety-item"><span class="mark mono">03</span><span>Спутниковый маячок SOS — работает без сети</span></div>
-        <div class="safety-item"><span class="mark mono">04</span><span>Партнёрская сеть техпомощи в трёх регионах</span></div>
-        <div class="safety-item"><span class="mark mono">05</span><span>Подменный автомобиль в течение суток при поломке</span></div>
-        <div class="safety-item"><span class="mark mono">06</span><span>Оффлайн-карта маршрута с точками ночёвок</span></div>
-        <div class="safety-item"><span class="mark mono">07</span><span>Аптечка первой помощи и сигнальные ракеты в машине</span></div>
-        <div class="safety-item"><span class="mark mono">08</span><span>Оператор на связи 24/7 — ответ в течение 15 минут</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ОСНОВАТЕЛЬ -->
-  <section class="founder wrap">
-    <p>Начали с одного пустого Jimny и вопроса: почему аренда внедорожника — это всегда «ключи, документы, до свидания»? Прошли лично каждую точку маршрутов, договорились с фермерами и егерями, уложили в машину всё, о чём обычно забываешь.</p>
-    <div class="founder-sign">Талгат Шакиров<span>основатель · Казань</span></div>
   </section>
 
   <!-- БРОНИРОВАНИЕ -->
@@ -366,6 +344,23 @@
     </div>
   </section>
 </main>
+
+<!-- МОДАЛЬНОЕ ОКНО — детализация маршрута -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this) closeRoute()">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3 id="modalTitle"></h3>
+        <div class="modal-tagline" id="modalTagline"></div>
+      </div>
+      <button class="modal-close" onclick="closeRoute()">×</button>
+    </div>
+    <div class="modal-meta" id="modalMeta"></div>
+    <div class="modal-map" id="modalMap"></div>
+    <div class="modal-points" id="modalPoints"></div>
+    <div class="modal-note" id="modalNote" hidden></div>
+  </div>
+</div>
 
 <footer>
   <div class="wrap footer-inner">
@@ -469,6 +464,182 @@
       submitBtn.disabled = false;
     }
   });
+
+  // ═══════════ ДЕТАЛИЗАЦИЯ МАРШРУТОВ: карта + точки ═══════════
+  // Координаты и описания точек для 8 маршрутов каталога — реальные данные
+  // (перенесены с прежнего сайта). Для 3 маршрутов «паспорта сложности»
+  // проверенных координат пока нет — см. needsCoords.
+  const routesData = {
+    'mushan-er': { name: 'Мушан-ер', tagline: 'лёгкий · 55 км', days: null, km: 55, price: null, needsCoords: true,
+      desc: 'Шлагбаум останавливает машину за километр до озера — дальше пешком, среди сосен, к чистой воде с песчаным дном.', points: [] },
+    'serebryanoe': { name: 'Серебряное', tagline: 'средний · 80 км', days: null, km: 80, price: null, needsCoords: true,
+      desc: 'Песчаные дюны и сосновый бор. Оставляешь машину у кромки леса и уходишь исследовать берег сам.', points: [] },
+    'tair': { name: 'Таир', tagline: 'сложный · 94 км', days: null, km: 94, price: null, needsCoords: true,
+      desc: 'Самое дальнее озеро с островом посередине. Заходишь с тихой стороны — берег и остров исследуешь с ночёвкой у костра.', points: [] },
+
+    'sviyazhsk': { name: 'Свияжск и альпаки', tagline: 'маршрут первой поездки', days: '1 день', km: 110, price: '15 000 ₽',
+      points: [
+        { name: 'Иннополис', lat: 55.7523, lng: 48.7433, info: 'Первый в России город для IT-специалистов, построенный в чистом поле в 2015 году. Современная архитектура университета Иннополис, стеклянные корпуса, лаундж-кафе в главном здании.', tip: 'берите латте в кофейне главного корпуса — лучшая в радиусе 40 км' },
+        { name: 'Свияжск', lat: 55.7726, lng: 48.6604, info: 'Остров-град, основанный Иваном Грозным в 1551 году как база для взятия Казани. Храмы XVI века, деревянная церковь Троицы, купеческая набережная. С 2017 года — объект Всемирного наследия ЮНЕСКО.', tip: 'приезжайте к 8 утра — до туристических автобусов', main: true },
+        { name: 'Введенская Слобода', lat: 55.7642, lng: 48.6733, info: 'Старинное село на левом берегу Свияги, сохранившаяся деревянная застройка XIX века.', tip: '15 минут остановки, деревянная церковь на левой стороне при въезде' },
+        { name: 'Ферма альпак в Исаково', lat: 55.7400, lng: 48.7900, info: 'Частная ферма с 20+ альпаками, ламами, козами, гусями. Фидинг из рук, зона для фото.', tip: 'вход 500₽, дети до 6 — бесплатно' },
+        { name: 'Ночёвка у Свияги', lat: 55.7800, lng: 48.7100, info: 'Тихий берег в лесной зоне, оборудованная стоянка для одной машины.', tip: 'стоянка в 200 м от паромной переправы' }
+      ]
+    },
+    'hram': { name: 'Храм всех религий и Верхний Услон', tagline: 'тихий формат выходного с ночёвкой на горе', days: '1 день', km: 110, price: '15 000 ₽',
+      points: [
+        { name: 'Храм всех религий', lat: 55.7906, lng: 48.9836, info: 'Арт-объект и духовный центр, задуманный художником Ильдаром Хановым как синтез 16 конфессий.', tip: 'экскурсии по расписанию: 11:00, 14:00, 16:00' },
+        { name: 'Раифский дендрарий', lat: 55.9053, lng: 48.7350, info: 'Старейший ботанический сад Поволжья, основан при монастыре в 1921 году.', tip: 'пик красоты — конец сентября' },
+        { name: 'Раифский монастырь', lat: 55.9053, lng: 48.7286, info: 'Мужской монастырь XVII века, комплекс на озере в 30 км от Казани.', tip: 'женщинам платок обязателен' },
+        { name: 'Верхний Услон', lat: 55.7519, lng: 48.9553, info: 'Правобережный посёлок на высоком берегу Волги, напротив Казани. Смотровая площадка даёт панораму на весь город.', tip: 'лучший вид на Казань — с обзорной площадки у монумента', main: true },
+        { name: 'Паром Услон — Казань', lat: 55.7676, lng: 48.9973, info: 'Паромная переправа через Волгу шириной около километра.', tip: 'паром с 6:00 до 22:00, интервал 30 мин' }
+      ]
+    },
+    'kamskoe-ustie': { name: 'Камское Устье и гора Лобач', tagline: 'три обзорные точки над Камским морем', days: '2 дня', km: 220, price: '29 000 ₽',
+      points: [
+        { name: 'Печищи', lat: 55.7178, lng: 48.9750, info: 'Деревня на высоком берегу Волги напротив Казани, известна со времён Ивана Грозного.', tip: 'обзорная точка сразу за церковью' },
+        { name: 'Красновидово', lat: 55.4200, lng: 48.8500, info: '22-летний Максим Горький работал в 1888 году в пекарне купца Деренкова.', tip: 'берите аудиогид (300 ₽) вместо экскурсии' },
+        { name: 'Камское Устье', lat: 55.2000, lng: 49.1500, info: 'Место слияния Камы и Волги, отвесные скалы 100 метров над водой.', tip: 'идти к смотровой к 6 утра — рассветный туман', main: true },
+        { name: 'Юрьевская пещера', lat: 55.1900, lng: 49.1700, info: 'Крупнейшая пещера европейской части России, длина ходов более 1 км.', tip: 'обязательно налобный фонарь и обувь с жёсткой подошвой' },
+        { name: 'Гора Лобач', lat: 55.1600, lng: 49.2000, info: 'Самая высокая точка Приволжской возвышенности в Татарстане, 145 метров над Камским морем.', tip: 'подъём 30 мин, летом — вода и головной убор' },
+        { name: 'Гипсовые карьеры', lat: 55.1500, lng: 49.1500, info: 'Заброшенные разработки, белые склоны, странные ландшафты.', tip: 'не спускайтесь при дожде — глина скользкая' },
+        { name: 'Тетюши', lat: 54.9333, lng: 48.8333, info: 'Старинный город на правом берегу Волги, основан в XVI веке.', tip: 'обед в кафе «Волга» в центре' }
+      ]
+    },
+    'semruk': { name: 'Семрук и Камское море', tagline: 'литературный маршрут по Каме', days: '2 дня', km: 300, price: '29 000 ₽',
+      points: [
+        { name: 'Лаишево', lat: 55.4083, lng: 49.5544, info: 'Старинный город на Каме, основан в 1557 году.', tip: 'обед в кафе на набережной — местная рыба' },
+        { name: 'Декорации «Семрук»', lat: 55.4300, lng: 49.6500, info: 'Сохранившиеся декорации фильма «Зулейха открывает глаза» на берегу Камы.', tip: 'приезжайте в будни — без людей, лучший свет — закатный', main: true },
+        { name: 'Камское море', lat: 55.3800, lng: 49.7000, info: 'Залив Куйбышевского водохранилища — крупнейшего в Европе, Кама достигает 40 км в ширину.', tip: 'купаться безопасно в 500 м от берега' },
+        { name: 'Ночёвка на берегу', lat: 55.4000, lng: 49.7100, info: 'Стоянка на песчаном берегу Камского моря.', tip: 'репеллент и мазь — комаров у воды много' },
+        { name: 'Сокуры', lat: 55.6500, lng: 49.1000, info: 'Сосновый бор в 60 км от Казани, минеральные родники.', tip: 'родники платные (100 ₽)' },
+        { name: 'Балтаси', lat: 56.3450, lng: 50.2058, info: 'Старинное татарское село, действующая мечеть XIX века.', tip: 'лавка «Татарский чай» напротив мечети' }
+      ]
+    },
+    'golubye-ozera': { name: 'Голубые озёра и Елабуга', tagline: 'природа, история и Цветаева', days: '3 дня', km: 280, price: '43 000 ₽',
+      points: [
+        { name: 'Обсерватория Энгельгардта', lat: 55.8400, lng: 48.7000, info: 'Старейшая обсерватория Поволжья, основана в 1901 году.', tip: 'ночной сеанс — по субботам, 800 ₽' },
+        { name: 'Голубые озёра', lat: 55.8992, lng: 49.2400, info: 'Уникальный природный парк, три карстовых озера, температура 4–6 °C круглый год.', tip: 'купаться можно, но не дольше 30 секунд', main: true },
+        { name: 'Танайка', lat: 55.6600, lng: 52.0100, info: 'Родниковая долина в 150 км от Казани.', tip: 'пикник у главного родника' },
+        { name: 'Красный Ключ', lat: 55.5700, lng: 52.1400, info: 'Самый крупный карстовый источник Поволжья.', tip: 'кадр — деревянный настил над источником' },
+        { name: 'Мамадыш', lat: 55.7156, lng: 51.4144, info: 'Купеческий город XIX века на реке Вятка.', tip: 'обед в кафе на высоком берегу Вятки' },
+        { name: 'Елабуга', lat: 55.7583, lng: 52.0653, info: 'Город на высоком берегу Камы, один из самых сохранившихся исторических центров России.', tip: 'прогулка по улице Казанской после 18:00' },
+        { name: 'Чёртово городище', lat: 55.7581, lng: 52.0361, info: 'Руины булгарской крепости X века на высоком мысе над Камой.', tip: 'приезжайте к закату' },
+        { name: 'Дом-музей Цветаевой', lat: 55.7595, lng: 52.0553, info: 'Дом, где Марина Цветаева провела последние 10 дней в 1941 году.', tip: 'берите экскурсию (500 ₽)' }
+      ]
+    },
+    'bulgaria': { name: 'Волжская Булгария', tagline: 'флагман истории · ЮНЕСКО', days: '5 дней', km: 720, price: '70 000 ₽',
+      points: [
+        { name: 'Алексеевское', lat: 55.3081, lng: 50.1181, info: 'Историческое село на Каме, основано в 1710 году.', tip: 'лавка с местным мёдом' },
+        { name: 'Три Озера', lat: 55.1000, lng: 49.6300, info: 'Природный памятник — три ледниковых озера в лесной зоне.', tip: 'среднее озеро — самое живописное' },
+        { name: 'Спасск', lat: 54.9573, lng: 49.2739, info: 'Тихий город в 10 км от Болгар.', tip: 'гостевой дом «Спасск» — от 2000₽' },
+        { name: 'Болгары', lat: 54.9700, lng: 49.0400, info: 'Город-музей, объект Всемирного наследия ЮНЕСКО с 2014 года. Столица Волжской Булгарии X–XIV веков.', tip: 'заложите минимум 4 часа', main: true },
+        { name: 'Билярск', lat: 54.9908, lng: 50.4386, info: 'Столица Волжской Булгарии до 1236 года.', tip: 'святой источник обязателен, платок с собой' },
+        { name: 'Чистополь', lat: 55.3624, lng: 50.6420, info: 'Купеческий город XIX века на Каме. Дом-музей Бориса Пастернака.', tip: 'музей Пастернака открыт до 17:00' },
+        { name: 'Юхмачи', lat: 54.7500, lng: 50.2500, info: 'Татарское село на пути к Ундорам.', tip: 'чай и чак-чак в лавке напротив мечети' },
+        { name: 'Ундоры', lat: 54.7161, lng: 48.4025, info: 'Курортное село на Волге, минеральные источники, палеонтологический музей.', tip: 'купите бутылку минеральной воды «Волжанка»' },
+        { name: 'Ульяновск', lat: 54.3141, lng: 48.4030, info: 'Город на высоком берегу Волги, родина Ленина.', tip: 'прогулка по эспланаде с 17:00 до 19:00' }
+      ]
+    },
+    'mari-taiga': { name: 'Марийская тайга', tagline: 'флагман природы · неделя без городских шумов', days: '7 дней', km: 900, price: '89 000 ₽',
+      points: [
+        { name: 'Марий Чодра, оз. Яльчик', lat: 56.0000, lng: 48.5450, info: 'Национальный парк площадью 37 000 га, реликтовая тайга. Озеро Яльчик — карстовое, глубина 35 метров.', tip: 'стоянка на восточном берегу — тише всего', main: true },
+        { name: 'Озеро Серебряное', lat: 56.0300, lng: 48.5000, info: 'Карстовое озеро в 10 км от Яльчика, с илом целебных свойств.', tip: 'купаться после 12 дня' },
+        { name: 'Глухое озеро', lat: 56.0800, lng: 48.4500, info: 'Таёжное озеро в 40 км в глубину парка.', tip: 'сюда только с GPS' },
+        { name: 'Водопад Илеть', lat: 56.1000, lng: 48.5700, info: 'Каскад минеральных родников в лесной зоне парка.', tip: 'репеллент обязателен' },
+        { name: 'Суслонгер', lat: 56.2333, lng: 48.1667, info: 'Курортный посёлок в сосновом лесу.', tip: 'санаторий «Кленовая Гора» — сессия бани' },
+        { name: 'Йошкар-Ола', lat: 56.6344, lng: 47.8994, info: 'Столица Марий Эл, набережная с копией моста в Брюгге.', tip: 'лучший свет — вечером на набережной' },
+        { name: 'Козьмодемьянск', lat: 56.3453, lng: 46.5731, info: 'Купеческий город на Волге, «марийская Швейцария».', tip: 'обед в «Купеческой лавке»' }
+      ]
+    },
+    'bashkiria': { name: 'Гранд-тур по Башкирии', tagline: 'флагман · 14 дней в горах Урала', days: '14 дней', km: 2760, price: '199 000 ₽',
+      points: [
+        { name: 'Уфа', lat: 54.7183, lng: 55.9287, info: 'Столица Башкирии, миллионник на слиянии рек Белая и Уфа.', tip: 'парковка у театра драмы' },
+        { name: 'Святые кустики', lat: 55.4085, lng: 56.3613, info: 'Успенский Свято-Георгиевский мужской монастырь.', tip: 'просторная парковка бесплатная' },
+        { name: 'Павловка', lat: 55.4270, lng: 56.5742, info: 'Павловская ГЭС — крупнейшая гидроэлектростанция Башкирии.', tip: 'вход на водохранилище платный (200₽)' },
+        { name: 'Красный ключ', lat: 55.3785, lng: 56.6741, info: 'Крупнейший карстовый источник в России с изумрудной водой +5°C.', tip: 'купаться нельзя' },
+        { name: 'Инзер', lat: 54.2231, lng: 57.5837, info: 'Живописное горное село на слиянии рек Большой и Малый Инзер.', tip: 'восхождение на Больничную с раннего утра' },
+        { name: 'Озеро Банное', lat: 53.5783, lng: 58.6475, info: 'Самое глубокое и живописное озеро Башкирии, глубина до 28 м.', tip: 'дикий пляж бесплатный' },
+        { name: 'Озеро Талкас', lat: 52.8279, lng: 58.2443, info: 'Самое высокогорное (548 м) озеро башкирского Зауралья.', tip: 'автокемпинг с душем — редкость' },
+        { name: 'Село Зилаир', lat: 52.2299, lng: 57.4228, info: 'Живописное старинное село на одноимённой реке.', tip: 'исторический центр — 1 часа хватит' },
+        { name: 'База «Ямашла»', lat: 52.1488, lng: 56.8579, info: 'Безопасная ночёвка на платной парковке, душ, туалет, охрана.', tip: 'единственная безопасная ночёвка на юге' },
+        { name: 'Мурадымовское ущелье', lat: 52.5794, lng: 56.8586, info: 'Природный парк в долине реки Большой Ик, карстовые пещеры эпохи палеолита.', tip: 'маршруты сверху и снизу ущелья' },
+        { name: 'Капова пещера', lat: 53.0346, lng: 57.0775, info: 'Одна из крупнейших карстовых пещер Урала, наскальная живопись эпохи палеолита.', tip: 'только с экскурсией (800₽)', main: true },
+        { name: 'Нугушское водохранилище', lat: 53.0736, lng: 56.4852, info: '«Башкирское море» в национальном парке «Башкирия».', tip: 'купаться отлично, стоянки бесплатные' },
+        { name: 'Шихан Торатау', lat: 53.5579, lng: 56.0828, info: 'Уникальный шихан — остаток древнего рифа возрастом 300 млн лет.', tip: 'подъём 30 мин, обзор 360°' },
+        { name: 'Шихан Юрактау', lat: 53.7411, lng: 56.0979, info: 'Менее популярный шихан, сохранивший первозданную дикость.', tip: 'идти по компасу или GPS' },
+        { name: 'Гостевой дом Юлдаш', lat: 54.5035, lng: 55.9214, info: 'Уютная локация в получасе езды от Уфы, душ, ужин, стоянка.', tip: 'звонить заранее для брони' }
+      ]
+    }
+  };
+
+  let currentMap = null;
+
+  function openRoute(id) {
+    const r = routesData[id];
+    if (!r) return;
+    document.getElementById('modalTitle').textContent = r.name;
+    document.getElementById('modalTagline').textContent = r.tagline;
+
+    const meta = document.getElementById('modalMeta');
+    meta.innerHTML = '';
+    if (r.days) meta.innerHTML += `<div><strong>${r.days}</strong>длительность</div>`;
+    if (r.km) meta.innerHTML += `<div><strong>${r.km} км</strong>маршрут</div>`;
+    if (r.price) meta.innerHTML += `<div><strong>${r.price}</strong>пакет</div>`;
+
+    const mapEl = document.getElementById('modalMap');
+    const pointsEl = document.getElementById('modalPoints');
+    const noteEl = document.getElementById('modalNote');
+    pointsEl.innerHTML = '';
+
+    if (r.needsCoords || !r.points.length) {
+      mapEl.style.display = 'none';
+      noteEl.hidden = false;
+      noteEl.textContent = r.desc + ' Точные координаты точек маршрута уточняются — карта появится, как только будет проведена личная разведка.';
+    } else {
+      mapEl.style.display = 'block';
+      noteEl.hidden = true;
+      r.points.forEach((p, i) => {
+        pointsEl.innerHTML += `
+          <div class="modal-point">
+            <div class="modal-point-head">
+              <span class="modal-point-num mono">${String(i + 1).padStart(2, '0')}</span>
+              <span class="modal-point-name">${p.name}${p.main ? ' ★' : ''}</span>
+            </div>
+            <div class="modal-point-info">${p.info}</div>
+            <div class="modal-point-tip">${p.tip}</div>
+          </div>`;
+      });
+    }
+
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    if (!r.needsCoords && r.points.length) {
+      setTimeout(() => {
+        if (currentMap) { currentMap.remove(); currentMap = null; }
+        currentMap = L.map('modalMap');
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap',
+          maxZoom: 18
+        }).addTo(currentMap);
+        const latlngs = r.points.map(p => [p.lat, p.lng]);
+        const markers = r.points.map((p, i) => {
+          return L.marker([p.lat, p.lng]).addTo(currentMap)
+            .bindPopup(`<b>${i + 1}. ${p.name}</b><br>${p.tip}`);
+        });
+        L.polyline(latlngs, { color: '#0A0A0A', weight: 2, dashArray: '4,6' }).addTo(currentMap);
+        currentMap.fitBounds(L.latLngBounds(latlngs), { padding: [24, 24] });
+      }, 50);
+    }
+  }
+
+  function closeRoute() {
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow = '';
+    if (currentMap) { currentMap.remove(); currentMap = null; }
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRoute(); });
 </script>
 
 </body>
