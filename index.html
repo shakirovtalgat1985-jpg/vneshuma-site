@@ -163,6 +163,34 @@
 
   .booking-status { margin-top: 16px; font-size: 14px; }
 
+  /* CALENDAR POPUP — один клик "от", один "до" */
+  .cal-field { position: relative; }
+  .cal-field input#datesDisplay { cursor: pointer; }
+  .cal-pop {
+    display: none; position: absolute; top: calc(100% + 8px); left: 0; z-index: 20;
+    width: 300px; max-width: 90vw; background: var(--bg); border: 1px solid var(--line-strong);
+    padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+  .cal-pop.open { display: block; }
+  .cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .cal-nav-btn { background: none; border: 1px solid var(--line); width: 28px; height: 28px; cursor: pointer; font-size: 15px; color: var(--ink); }
+  .cal-nav-btn:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .cal-title { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
+  .cal-dow, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal-dow { margin-bottom: 4px; }
+  .cal-dow span { font-size: 10px; text-align: center; color: var(--ink-soft); letter-spacing: 0.5px; }
+  .cal-cell {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; cursor: pointer; border: 1px solid transparent; user-select: none;
+  }
+  .cal-cell.pad { cursor: default; }
+  .cal-cell.past { color: var(--line); cursor: not-allowed; }
+  .cal-cell.avail:hover { border-color: var(--ink); }
+  .cal-cell.sel { background: var(--ink); color: var(--bg); }
+  .cal-cell.range { background: var(--line); }
+  .cal-summary { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-soft); text-align: center; }
+  .cal-summary strong { color: var(--ink); }
+
   /* ACADEMY TEASER */
   .academy-teaser { padding: 100px 0; text-align: center; border-top: 1px solid var(--line); }
   .academy-teaser .eyebrow { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 14px; }
@@ -234,42 +262,51 @@
 
     <div class="wrap">
       <div class="levels-list">
-        <div class="level-item">
-          <div class="level-num mono">01</div>
-          <div><h3>Первый выезд</h3><p>1–2 дня · до 100 км — развести костёр и приготовить простой ужин на мангале самостоятельно.</p></div>
+        <div class="levels-more" id="levelsMore" hidden>
+          <div class="level-item">
+            <div class="level-num mono">01</div>
+            <div><h3>Первый выезд</h3><p>1–2 дня · до 100 км — развести костёр и приготовить простой ужин на мангале самостоятельно.</p></div>
+          </div>
+          <div class="level-item">
+            <div class="level-num mono">02</div>
+            <div><h3>Свой лагерь</h3><p>2–3 дня · до 200 км — поставить лагерь без подсказок и сварить уху на костре.</p></div>
+          </div>
+          <div class="level-item">
+            <div class="level-num mono">03</div>
+            <div><h3>Чтение места</h3><p>3 дня · без сети — проложить путь по бумажной карте и выйти к точке без навигатора.</p></div>
+          </div>
+          <div class="level-item">
+            <div class="level-num mono">04</div>
+            <div><h3>Испытание</h3><p>3–4 дня — провести вечер без телефона: час у костра, только тишина и разговор.</p></div>
+          </div>
+          <div class="level-item">
+            <div class="level-num mono">05</div>
+            <div><h3>Автономность</h3><p>4–5 дней — добыть воду из природного источника и отфильтровать её для питья.</p></div>
+          </div>
+          <div class="level-item">
+            <div class="level-num mono">06</div>
+            <div><h3>Экспедиция</h3><p>5+ дней · новый регион — разбить лагерь и наладить быт с нуля там, где нет готовой инфраструктуры.</p></div>
+          </div>
+          <div class="level-item">
+            <div class="level-num mono">07</div>
+            <div><h3>Горы</h3><p>по приглашению · Башкирия — асфальтированный горный серпантин: подняться и спуститься, контролируя скорость на затяжных участках.</p></div>
+          </div>
+          <div class="level-item">
+            <div class="level-num mono">08</div>
+            <div><h3>Броды и ущелья</h3><p>по приглашению — известный неглубокий брод и узкое ущелье, разведанное место, не вслепую.</p></div>
+          </div>
+          <div class="level-item">
+            <div class="level-num mono">09</div>
+            <div><h3>Наставник</h3><p>по приглашению — провести менее опытного человека через маршрут его уровня и передать навыки.</p></div>
+          </div>
         </div>
-        <div class="level-item">
-          <div class="level-num mono">02</div>
-          <div><h3>Свой лагерь</h3><p>2–3 дня · до 200 км — поставить лагерь без подсказок и сварить уху на костре.</p></div>
-        </div>
-        <div class="level-item">
-          <div class="level-num mono">03</div>
-          <div><h3>Чтение места</h3><p>3 дня · без сети — проложить путь по бумажной карте и выйти к точке без навигатора.</p></div>
-        </div>
-        <div class="level-item">
-          <div class="level-num mono">04</div>
-          <div><h3>Испытание</h3><p>3–4 дня — провести вечер без телефона: час у костра, только тишина и разговор.</p></div>
-        </div>
-        <div class="level-item">
-          <div class="level-num mono">05</div>
-          <div><h3>Автономность</h3><p>4–5 дней — добыть воду из природного источника и отфильтровать её для питья.</p></div>
-        </div>
-        <div class="level-item">
-          <div class="level-num mono">06</div>
-          <div><h3>Экспедиция</h3><p>5+ дней · новый регион — разбить лагерь и наладить быт с нуля там, где нет готовой инфраструктуры.</p></div>
-        </div>
-        <div class="level-item">
-          <div class="level-num mono">07</div>
-          <div><h3>Горы</h3><p>по приглашению · Башкирия — асфальтированный горный серпантин: подняться и спуститься, контролируя скорость на затяжных участках.</p></div>
-        </div>
-        <div class="level-item">
-          <div class="level-num mono">08</div>
-          <div><h3>Броды и ущелья</h3><p>по приглашению — известный неглубокий брод и узкое ущелье, разведанное место, не вслепую.</p></div>
-        </div>
-        <div class="level-item">
-          <div class="level-num mono">09</div>
-          <div><h3>Наставник</h3><p>по приглашению — провести менее опытного человека через маршрут его уровня и передать навыки.</p></div>
-        </div>
+      </div>
+      <div style="text-align:center; margin-top: 8px;">
+        <button type="button" class="btn btn-outline" id="levelsToggle" onclick="
+          const m = document.getElementById('levelsMore');
+          m.hidden = !m.hidden;
+          this.textContent = m.hidden ? 'показать все 9 уровней ↓' : 'свернуть ↑';
+        ">показать все 9 уровней ↓</button>
       </div>
     </div>
 
@@ -380,9 +417,21 @@
           </select>
         </div>
 
-        <div class="row-2">
-          <div class="field"><label>дата начала</label><input type="date" name="dateStart" required></div>
-          <div class="field"><label>дата окончания</label><input type="date" name="dateEnd" required></div>
+        <div class="field cal-field">
+          <label>даты поездки</label>
+          <input type="text" id="datesDisplay" readonly placeholder="выбрать даты" autocomplete="off">
+          <input type="hidden" name="dateStart" id="dateStart" required>
+          <input type="hidden" name="dateEnd" id="dateEnd" required>
+          <div class="cal-pop" id="calPop">
+            <div class="cal-nav">
+              <button type="button" class="cal-nav-btn" id="calPrev">‹</button>
+              <div class="cal-title mono" id="calTitle"></div>
+              <button type="button" class="cal-nav-btn" id="calNext">›</button>
+            </div>
+            <div class="cal-dow" id="calDow"></div>
+            <div class="cal-grid" id="calGrid"></div>
+            <div class="cal-summary" id="calSummary">выбери дату начала</div>
+          </div>
         </div>
 
         <div class="field-note">путешественники: 2 человека</div>
@@ -431,6 +480,78 @@
 </footer>
 
 <script>
+  // Календарь бронирования — один попап, клик "от", клик "до"
+  (function bookingCalendar(){
+    const MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+    const DOW = ['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'];
+    const display = document.getElementById('datesDisplay');
+    const pop = document.getElementById('calPop');
+    const grid = document.getElementById('calGrid');
+    const dowRow = document.getElementById('calDow');
+    const title = document.getElementById('calTitle');
+    const summary = document.getElementById('calSummary');
+    const dsInput = document.getElementById('dateStart');
+    const deInput = document.getElementById('dateEnd');
+    if (!display) return;
+
+    dowRow.innerHTML = DOW.map(d => `<span>${d}</span>`).join('');
+    let cursor = new Date(); cursor.setDate(1);
+    let start = null, end = null;
+
+    function fmt(d) { return d.toISOString().slice(0, 10); }
+    function human(d) { return d.getDate() + ' ' + MONTHS[d.getMonth()]; }
+    function same(a, b) { return a && b && fmt(a) === fmt(b); }
+
+    function render() {
+      const y = cursor.getFullYear(), m = cursor.getMonth();
+      title.textContent = MONTHS[m] + ' ' + y;
+      const first = new Date(y, m, 1);
+      const startDow = (first.getDay() + 6) % 7;
+      const daysInMonth = new Date(y, m + 1, 0).getDate();
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      let html = '';
+      for (let i = 0; i < startDow; i++) html += '<div class="cal-cell pad"></div>';
+      for (let d = 1; d <= daysInMonth; d++) {
+        const date = new Date(y, m, d);
+        let cls = 'cal-cell';
+        if (date < today) cls += ' past'; else cls += ' avail';
+        if (same(date, start) || same(date, end)) cls += ' sel';
+        else if (start && end && date > start && date < end) cls += ' range';
+        html += `<div class="${cls}" data-date="${fmt(date)}">${d}</div>`;
+      }
+      grid.innerHTML = html;
+      grid.querySelectorAll('.cal-cell.avail, .cal-cell.sel, .cal-cell.range').forEach(el => {
+        el.addEventListener('click', () => pick(el.dataset.date));
+      });
+      if (start && end) {
+        summary.innerHTML = `<strong>${human(start)}</strong> → <strong>${human(end)}</strong>`;
+      } else if (start) {
+        summary.innerHTML = `от <strong>${human(start)}</strong> — выбери дату окончания`;
+      } else {
+        summary.textContent = 'выбери дату начала';
+      }
+    }
+
+    function pick(iso) {
+      const d = new Date(iso + 'T00:00:00');
+      if (!start || (start && end)) { start = d; end = null; }
+      else if (d < start) { start = d; end = null; }
+      else if (same(d, start)) { start = null; end = null; }
+      else { end = d; }
+      dsInput.value = start ? fmt(start) : '';
+      deInput.value = end ? fmt(end) : '';
+      display.value = start && end ? `${human(start)} → ${human(end)}` : (start ? `от ${human(start)}` : '');
+      render();
+      if (start && end) setTimeout(() => pop.classList.remove('open'), 350);
+    }
+
+    display.addEventListener('click', (e) => { e.stopPropagation(); pop.classList.toggle('open'); });
+    document.getElementById('calPrev').addEventListener('click', () => { cursor.setMonth(cursor.getMonth() - 1); render(); });
+    document.getElementById('calNext').addEventListener('click', () => { cursor.setMonth(cursor.getMonth() + 1); render(); });
+    document.addEventListener('click', (e) => { if (!pop.contains(e.target) && e.target !== display) pop.classList.remove('open'); });
+    render();
+  })();
+
   // Hero slideshow — автопрокрутка + точки
   (function heroSlideshow(){
     const slides = document.querySelectorAll('#heroSlides .hero-slide');
