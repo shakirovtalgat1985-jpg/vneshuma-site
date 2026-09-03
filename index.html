@@ -10,6 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 <style>
   :root {
     --bg: #FFFFFF;
@@ -34,7 +36,7 @@
 
   /* NAV */
   .brand { font-weight: 600; letter-spacing: 3px; text-decoration: none; color: #fff; text-transform: uppercase; }
-  .hero-brand { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: clamp(28px, 5vw, 48px); letter-spacing: 8px; z-index: 2; }
+  .hero-brand { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: clamp(28px, 5vw, 48px); letter-spacing: 8px; margin-right: -8px; text-align: center; z-index: 2; }
   .nav-cta { font-size: 13px; letter-spacing: 1px; text-decoration: none; color: #fff; }
 
   /* HERO SLIDESHOW */
@@ -85,11 +87,32 @@
   .tile-body p { font-size: 13px; opacity: 0.9; max-width: 320px; }
   .tile-dist { position: absolute; top: 26px; right: 26px; z-index: 1; color: #fff; font-size: 13px; letter-spacing: 1px; }
 
+  /* PASSPORT LEVELS — plain numbered list, no cards */
+  .levels-list { max-width: 640px; margin: 0 auto; }
+  .level-item { display: grid; grid-template-columns: 90px 1fr; gap: 24px; padding: 26px 0; border-top: 1px solid var(--line); align-items: baseline; }
+  .levels-list .level-item:last-child { border-bottom: 1px solid var(--line); }
+  .level-num { font-size: 13px; color: var(--ink-soft); letter-spacing: 1px; }
+  .level-item h3 { font-size: 19px; margin-bottom: 6px; }
+  .level-item p { font-size: 14px; color: var(--ink-soft); }
+  @media (max-width: 560px) { .level-item { grid-template-columns: 1fr; gap: 4px; } }
+
   /* PASSPORT CTA STRIP */
-  .passport-strip { padding: 56px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  .passport-strip .wrap { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
-  .passport-strip p { color: var(--ink-soft); max-width: 480px; font-size: 15px; }
-  .passport-strip h3 { font-size: 20px; margin-bottom: 8px; }
+  .passport-strip { padding: 64px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .passport-strip-inner { display: flex; align-items: center; gap: 48px; flex-wrap: wrap; }
+  .passport-strip-text { flex: 1; min-width: 240px; }
+  .passport-strip-text p { color: var(--ink-soft); max-width: 480px; font-size: 15px; margin-bottom: 20px; }
+  .passport-strip-text h3 { font-size: 20px; margin-bottom: 8px; }
+
+  /* PASSPORT VISUAL MOCKUP */
+  .passport-mock { flex-shrink: 0; width: 220px; aspect-ratio: 3/4.2; background: var(--ink); color: #fff; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+  .passport-mock::after { content: ''; position: absolute; inset: 6px; border: 1px solid rgba(255,255,255,0.3); pointer-events: none; }
+  .passport-mock-top { display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 1px; }
+  .passport-mock-emblem { font-size: 16px; }
+  .passport-mock-title { font-size: 22px; font-weight: 600; line-height: 1.2; margin: 10px 0; }
+  .passport-mock-stamps { display: flex; gap: 8px; }
+  .passport-mock-stamp { width: 34px; height: 34px; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; letter-spacing: 1px; color: rgba(255,255,255,0.5); }
+  .passport-mock-stamp.done { border-color: #fff; color: #fff; transform: rotate(-8deg); }
+  .passport-mock-code { font-size: 11px; letter-spacing: 1px; color: rgba(255,255,255,0.6); }
 
   /* CATALOG — plain list, no cards */
   .catalog { padding: 40px 0 20px; }
@@ -114,6 +137,7 @@
   .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   @media (max-width: 560px) { .row-2 { grid-template-columns: 1fr; } }
   .field { margin-bottom: 20px; }
+  .field-note { font-size: 13px; color: var(--ink-soft); margin-bottom: 28px; }
   input, select, textarea {
     width: 100%; padding: 13px 0; border: none; border-bottom: 1px solid var(--line); background: transparent;
     font-family: inherit; font-size: 15px; color: var(--ink); border-radius: 0;
@@ -138,6 +162,12 @@
   .total-note { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
 
   .booking-status { margin-top: 16px; font-size: 14px; }
+
+  /* ACADEMY TEASER */
+  .academy-teaser { padding: 100px 0; text-align: center; border-top: 1px solid var(--line); }
+  .academy-teaser .eyebrow { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 14px; }
+  .academy-teaser h2 { font-size: clamp(26px, 3.6vw, 36px); margin-bottom: 18px; text-transform: lowercase; }
+  .academy-teaser p { color: var(--ink-soft); max-width: 480px; margin: 0 auto 32px; }
 
   /* FOOTER */
   footer { padding: 48px 0; border-top: 1px solid var(--line); }
@@ -171,10 +201,10 @@
 
 <!-- HERO: полноэкранное слайд-шоу, без подписей -->
 <div class="hero-slideshow" id="heroSlides">
-  <div class="hero-slide active"><img src="https://picsum.photos/id/110/1800/2200" alt=""></div>
-  <div class="hero-slide"><img src="https://picsum.photos/id/10/1800/2200" alt=""></div>
-  <div class="hero-slide"><img src="https://picsum.photos/id/1039/1800/2200" alt=""></div>
-  <div class="hero-slide"><img src="https://picsum.photos/id/28/1800/2200" alt=""></div>
+  <div class="hero-slide active"><img src="photos/hero-1-110.jpg" alt=""></div>
+  <div class="hero-slide"><img src="photos/hero-2-10.jpg" alt=""></div>
+  <div class="hero-slide"><img src="photos/hero-3-1039.jpg" alt=""></div>
+  <div class="hero-slide"><img src="photos/hero-4-28.jpg" alt=""></div>
   <a href="#" class="brand hero-brand">вне шума</a>
   <a href="#booking" class="hero-booking-link">бронирование</a>
   <div class="hero-dots" id="heroDots"></div>
@@ -192,53 +222,77 @@
     </div>
   </section>
 
-  <div class="break-photo"><img src="https://picsum.photos/id/1044/2000/1200" alt=""></div>
+  <div class="break-photo"><img src="photos/break-1044.jpg" alt=""></div>
 
-  <!-- ПАСПОРТ СЛОЖНОСТИ — 3 новых прогрессивных маршрута -->
+  <!-- ПАСПОРТ СЛОЖНОСТИ — реальная прогрессия, 9 уровней -->
   <section id="passport">
     <div class="section-head wrap">
-      <div class="eyebrow">паспорт сложности · 3 уровня</div>
-      <h2>маршруты, которые открываются один за другим</h2>
-      <p>Начинаешь с лёгкого. Проходишь — открывается следующий уровень в Telegram-боте. Три озера, три степени погружения в тишину.</p>
+      <div class="eyebrow">паспорт сложности · 9 уровней</div>
+      <h2>прогрессия, которая открывается сама</h2>
+      <p>По возвращении с маршрута бот сам поздравляет тебя, присылает пару фото и цитату с этой поездки — и открывает доступ к следующему уровню. Без ручных действий с нашей стороны.</p>
     </div>
 
-    <div class="tiles">
-      <a href="javascript:void(0)" class="tile" onclick="openRoute('mushan-er')">
-        <img src="https://picsum.photos/id/329/900/1200" alt="Мушан-ер">
-        <div class="tile-dist mono">55 км</div>
-        <div class="tile-body">
-          <span class="tile-level mono">уровень 1 · лёгкий</span>
-          <h3>Мушан-ер</h3>
-          <p>Шлагбаум останавливает машину за километр до озера — дальше пешком, среди сосен, к чистой воде с песчаным дном.</p>
+    <div class="wrap">
+      <div class="levels-list">
+        <div class="level-item">
+          <div class="level-num mono">01</div>
+          <div><h3>Первый выезд</h3><p>1–2 дня · до 100 км — развести костёр и приготовить простой ужин на мангале самостоятельно.</p></div>
         </div>
-      </a>
-      <a href="javascript:void(0)" class="tile" onclick="openRoute('serebryanoe')">
-        <img src="https://picsum.photos/id/187/900/1200" alt="Серебряное">
-        <div class="tile-dist mono">80 км</div>
-        <div class="tile-body">
-          <span class="tile-level mono">уровень 2 · средний</span>
-          <h3>Серебряное</h3>
-          <p>Песчаные дюны и сосновый бор. Оставляешь машину у кромки леса и уходишь исследовать берег сам.</p>
+        <div class="level-item">
+          <div class="level-num mono">02</div>
+          <div><h3>Свой лагерь</h3><p>2–3 дня · до 200 км — поставить лагерь без подсказок и сварить уху на костре.</p></div>
         </div>
-      </a>
-      <a href="javascript:void(0)" class="tile" onclick="openRoute('tair')">
-        <img src="https://picsum.photos/id/1042/900/1200" alt="Таир">
-        <div class="tile-dist mono">94 км</div>
-        <div class="tile-body">
-          <span class="tile-level mono">уровень 3 · сложный</span>
-          <h3>Таир</h3>
-          <p>Самое дальнее озеро с островом посередине. Заходишь с тихой стороны — берег и остров исследуешь с ночёвкой у костра.</p>
+        <div class="level-item">
+          <div class="level-num mono">03</div>
+          <div><h3>Чтение места</h3><p>3 дня · без сети — проложить путь по бумажной карте и выйти к точке без навигатора.</p></div>
         </div>
-      </a>
+        <div class="level-item">
+          <div class="level-num mono">04</div>
+          <div><h3>Испытание</h3><p>3–4 дня — провести вечер без телефона: час у костра, только тишина и разговор.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">05</div>
+          <div><h3>Автономность</h3><p>4–5 дней — добыть воду из природного источника и отфильтровать её для питья.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">06</div>
+          <div><h3>Экспедиция</h3><p>5+ дней · новый регион — разбить лагерь и наладить быт с нуля там, где нет готовой инфраструктуры.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">07</div>
+          <div><h3>Горы</h3><p>по приглашению · Башкирия — асфальтированный горный серпантин: подняться и спуститься, контролируя скорость на затяжных участках.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">08</div>
+          <div><h3>Броды и ущелья</h3><p>по приглашению — известный неглубокий брод и узкое ущелье, разведанное место, не вслепую.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">09</div>
+          <div><h3>Наставник</h3><p>по приглашению — провести менее опытного человека через маршрут его уровня и передать навыки.</p></div>
+        </div>
+      </div>
     </div>
 
     <div class="passport-strip">
-      <div class="wrap">
-        <div>
+      <div class="wrap passport-strip-inner">
+        <div class="passport-mock" aria-hidden="true">
+          <div class="passport-mock-top">
+            <span class="passport-mock-emblem">✦</span>
+            <span class="passport-mock-country">ВНЕ ШУМА</span>
+          </div>
+          <div class="passport-mock-title">Паспорт<br>сложности</div>
+          <div class="passport-mock-stamps">
+            <span class="passport-mock-stamp done">01</span>
+            <span class="passport-mock-stamp">02</span>
+            <span class="passport-mock-stamp">03</span>
+          </div>
+          <div class="passport-mock-code mono">№ VNSH-0001</div>
+        </div>
+        <div class="passport-strip-text">
           <h3>физический прогресс в Telegram-боте</h3>
           <p>Каждый пройденный маршрут — штамп в паспорте. Следующий уровень открывается только после предыдущего.</p>
+          <a href="https://t.me/Talgat_Shakirov" class="btn btn-outline" target="_blank" rel="noopener">написать оператору →</a>
         </div>
-        <a href="https://t.me/Talgat_Shakirov" class="btn btn-outline" target="_blank" rel="noopener">написать оператору →</a>
       </div>
     </div>
   </section>
@@ -313,11 +367,6 @@
           <label>маршрут</label>
           <select name="route" id="route">
             <option value="">ещё не выбрал — подскажите</option>
-            <optgroup label="паспорт сложности">
-              <option value="Мушан-ер · лёгкий · 55 км">Мушан-ер · лёгкий · 55 км</option>
-              <option value="Серебряное · средний · 80 км">Серебряное · средний · 80 км</option>
-              <option value="Таир · сложный · 94 км">Таир · сложный · 94 км</option>
-            </optgroup>
             <optgroup label="полный каталог">
               <option value="Свияжск и альпаки · 1 день">Свияжск и альпаки · 1 день</option>
               <option value="Храм всех религий и Верхний Услон · 1 день">Храм всех религий и Верхний Услон · 1 день</option>
@@ -332,16 +381,25 @@
         </div>
 
         <div class="row-2">
-          <div class="field"><label>даты поездки</label><input type="text" name="dates" placeholder="например, 12–13 сентября" required></div>
-          <div class="field"><label>путешественники</label>
-            <select name="pax"><option>1 взрослый</option><option selected>2 взрослых</option><option>2 взрослых + 1 ребёнок</option><option>2 взрослых + 2 детей</option></select>
-          </div>
+          <div class="field"><label>дата начала</label><input type="date" name="dateStart" required></div>
+          <div class="field"><label>дата окончания</label><input type="date" name="dateEnd" required></div>
         </div>
+
+        <div class="field-note">путешественники: 2 человека</div>
+        <input type="hidden" name="pax" value="2 человека">
 
         <button type="submit" class="btn btn-primary">отправить заявку →</button>
         <div class="booking-status" id="bookingStatus"></div>
       </form>
     </div>
+  </section>
+
+  <!-- АКАДЕМИЯ — тизер, ссылка на отдельную страницу -->
+  <section class="academy-teaser wrap">
+    <div class="eyebrow">новое</div>
+    <h2>академия вне шума</h2>
+    <p>Больше самостоятельности. Больше доступных территорий. Учимся не выживать в природе, а чувствовать себя в ней уверенно.</p>
+    <a href="/academy" class="btn btn-outline">узнать об академии →</a>
   </section>
 </main>
 
@@ -395,36 +453,13 @@
   })();
 
   // Отправка заявки — на серверную функцию (токен бота не хранится на сайте)
-  const API_URL = '/.netlify/functions/create-booking';
-  const CHECK_URL = '/.netlify/functions/check-start';
-  const BOT_USERNAME = 'vneshuma_bot';
+  const API_URL = '/api/create-booking';
+  const BOT_USERNAME = 'vneshuma_travel_bot';
 
   function makeBookingId() {
     const t = Date.now().toString(36).toUpperCase();
     const r = Math.random().toString(36).slice(2, 6).toUpperCase();
     return `BID${t}${r}`;
-  }
-
-  // Пытаемся получить клиенту копию заявки в Telegram: открываем бота с deep-link'ом
-  // /start <bookingId> и в фоне спрашиваем сервер, не написал ли клиент боту —
-  // как только напишет, серверная функция сама пришлёт ему копию.
-  async function pollForClientCopy(bookingId, message, status) {
-    const deadline = Date.now() + 60000;
-    while (Date.now() < deadline) {
-      await new Promise(r => setTimeout(r, 2500));
-      try {
-        const res = await fetch(CHECK_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ bookingId, message })
-        });
-        const data = await res.json();
-        if (data.found) {
-          status.textContent = 'Заявка отправлена. Копия пришла вам в Telegram.';
-          return;
-        }
-      } catch (err) { /* тихо пробуем ещё раз */ }
-    }
   }
 
   document.getElementById('bookingForm').addEventListener('submit', async function (e) {
@@ -438,7 +473,7 @@
     message += `имя: ${data.get('name')}\n`;
     message += `телефон: ${data.get('phone')}\n`;
     message += `маршрут: ${data.get('route') || '—'}\n`;
-    message += `даты: ${data.get('dates')}\n`;
+    message += `даты: ${data.get('dateStart')} → ${data.get('dateEnd')}\n`;
     message += `путешественники: ${data.get('pax')}\n`;
     message += `\n────────────────────────\nID: ${bookingId}`;
 
@@ -455,7 +490,6 @@
       status.innerHTML = 'Заявка отправлена — мы свяжемся в течение 15 минут. ' +
         `<a href="https://t.me/${BOT_USERNAME}?start=${bookingId}" target="_blank" rel="noopener">получить копию в Telegram →</a>`;
       form.reset();
-      pollForClientCopy(bookingId, message, status);
     } catch (err) {
       status.innerHTML = 'Не удалось отправить автоматически. Напиши нам напрямую: ' +
         '<a href="https://wa.me/79297250006" target="_blank" rel="noopener">WhatsApp</a> или ' +
@@ -470,13 +504,6 @@
   // (перенесены с прежнего сайта). Для 3 маршрутов «паспорта сложности»
   // проверенных координат пока нет — см. needsCoords.
   const routesData = {
-    'mushan-er': { name: 'Мушан-ер', tagline: 'лёгкий · 55 км', days: null, km: 55, price: null, needsCoords: true,
-      desc: 'Шлагбаум останавливает машину за километр до озера — дальше пешком, среди сосен, к чистой воде с песчаным дном.', points: [] },
-    'serebryanoe': { name: 'Серебряное', tagline: 'средний · 80 км', days: null, km: 80, price: null, needsCoords: true,
-      desc: 'Песчаные дюны и сосновый бор. Оставляешь машину у кромки леса и уходишь исследовать берег сам.', points: [] },
-    'tair': { name: 'Таир', tagline: 'сложный · 94 км', days: null, km: 94, price: null, needsCoords: true,
-      desc: 'Самое дальнее озеро с островом посередине. Заходишь с тихой стороны — берег и остров исследуешь с ночёвкой у костра.', points: [] },
-
     'sviyazhsk': { name: 'Свияжск и альпаки', tagline: 'маршрут первой поездки', days: '1 день', km: 110, price: '15 000 ₽',
       points: [
         { name: 'Иннополис', lat: 55.7523, lng: 48.7433, info: 'Первый в России город для IT-специалистов, построенный в чистом поле в 2015 году. Современная архитектура университета Иннополис, стеклянные корпуса, лаундж-кафе в главном здании.', tip: 'берите латте в кофейне главного корпуса — лучшая в радиусе 40 км' },
@@ -624,12 +651,23 @@
           maxZoom: 18
         }).addTo(currentMap);
         const latlngs = r.points.map(p => [p.lat, p.lng]);
-        const markers = r.points.map((p, i) => {
-          return L.marker([p.lat, p.lng]).addTo(currentMap)
+        r.points.forEach((p, i) => {
+          L.marker([p.lat, p.lng]).addTo(currentMap)
             .bindPopup(`<b>${i + 1}. ${p.name}</b><br>${p.tip}`);
         });
-        L.polyline(latlngs, { color: '#0A0A0A', weight: 2, dashArray: '4,6' }).addTo(currentMap);
         currentMap.fitBounds(L.latLngBounds(latlngs), { padding: [24, 24] });
+
+        // Прокладываем маршрут по реальным дорогам (OSRM), а не прямой линией
+        L.Routing.control({
+          waypoints: latlngs.map(([lat, lng]) => L.latLng(lat, lng)),
+          routeWhileDragging: false,
+          addWaypoints: false,
+          draggableWaypoints: false,
+          fitSelectedRoutes: false,
+          show: false,
+          createMarker: () => null,
+          lineOptions: { styles: [{ color: '#0A0A0A', weight: 3, opacity: 0.85 }] }
+        }).addTo(currentMap);
       }, 50);
     }
   }

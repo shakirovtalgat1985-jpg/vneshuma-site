@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Академия вне шума</title>
+<meta name="description" content="Академия «вне шума» — учимся не выживать в природе, а чувствовать себя в ней уверенно. Первый шаг — однодневный полевой выход.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --ink: #0A0A0A;
+    --ink-soft: #5A5A5A;
+    --line: #DADADA;
+    --line-strong: #0A0A0A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'IBM Plex Mono', monospace; font-size: 16px; line-height: 1.6;
+    overflow-x: hidden;
+  }
+  h1, h2, h3 { font-family: 'IBM Plex Mono', monospace; font-weight: 600; line-height: 1.15; }
+  img { display: block; max-width: 100%; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 640px) { .wrap { padding: 0 20px; } }
+  a { color: inherit; }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+
+  .brand { font-weight: 600; letter-spacing: 3px; text-decoration: none; color: #fff; text-transform: uppercase; font-size: 15px; }
+  .top-nav { position: absolute; top: 24px; left: 0; right: 0; z-index: 3; display: flex; justify-content: space-between; align-items: center; padding: 0 32px; }
+  @media (max-width: 640px) { .top-nav { padding: 0 20px; } }
+  .back-link { color: #fff; font-size: 13px; letter-spacing: 1px; text-decoration: none; opacity: 0.85; }
+
+  /* HERO */
+  .hero { position: relative; width: 100%; height: 100svh; overflow: hidden; background: #0A0A0A; display: flex; align-items: center; justify-content: center; text-align: center; }
+  .hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.75) contrast(1.05); }
+  .hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.5) 100%); }
+  .hero-inner { position: relative; z-index: 2; color: #fff; padding: 0 24px; max-width: 640px; }
+  .hero-eyebrow { font-size: 13px; letter-spacing: 6px; text-transform: uppercase; opacity: 0.85; margin-bottom: 22px; }
+  .hero-inner h1 { font-size: clamp(32px, 6vw, 52px); letter-spacing: 1px; margin-bottom: 24px; }
+  .hero-inner p { font-size: clamp(15px, 2vw, 18px); opacity: 0.9; margin-bottom: 40px; line-height: 1.6; }
+  .hero-note { margin-top: 18px; font-size: 13px; opacity: 0.7; }
+
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 16px 36px; border-radius: 2px; text-decoration: none; font-size: 14px; letter-spacing: 1px; font-weight: 600; text-transform: uppercase; transition: all 0.15s; border: 1px solid var(--ink); }
+  .btn-primary { background: var(--ink); color: var(--bg); }
+  .btn-primary:hover { background: #333; }
+  .btn-on-dark { border-color: #fff; background: #fff; color: #0A0A0A; }
+  .btn-on-dark:hover { background: transparent; color: #fff; }
+
+  /* INTRO */
+  .intro { padding: 110px 0; text-align: center; }
+  .intro-eyebrow { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 28px; }
+  .intro p { font-size: clamp(18px, 2.4vw, 23px); max-width: 680px; margin: 0 auto; line-height: 1.6; }
+
+  /* STEPS / LEVELS */
+  .section-head { padding: 0 0 60px; text-align: center; }
+  .section-head .eyebrow { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 14px; }
+  .section-head h2 { font-size: clamp(26px, 3.6vw, 36px); }
+
+  .levels { padding: 0 0 110px; }
+  .levels-list { max-width: 640px; margin: 0 auto; }
+  .level-item { display: grid; grid-template-columns: 90px 1fr; gap: 24px; padding: 28px 0; border-top: 1px solid var(--line); align-items: baseline; }
+  .levels-list .level-item:last-child { border-bottom: 1px solid var(--line); }
+  .level-num { font-size: 13px; color: var(--ink-soft); letter-spacing: 1px; }
+  .level-item h3 { font-size: 19px; margin-bottom: 6px; }
+  .level-item p { font-size: 14px; color: var(--ink-soft); }
+  @media (max-width: 560px) { .level-item { grid-template-columns: 1fr; gap: 4px; } }
+
+  /* FINAL CTA */
+  .final-cta { padding: 130px 0; text-align: center; background: var(--ink); color: #fff; }
+  .final-cta-eyebrow { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; opacity: 0.6; margin-bottom: 20px; }
+  .final-cta h2 { font-size: clamp(26px, 4vw, 38px); margin-bottom: 16px; }
+  .final-cta p { color: rgba(255,255,255,0.7); margin-bottom: 40px; font-size: 16px; }
+  .final-cta .hero-note { color: rgba(255,255,255,0.55); }
+
+  footer { padding: 48px 0; border-top: 1px solid var(--line); }
+  .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; font-size: 14px; color: var(--ink-soft); }
+  .footer-inner a { text-decoration: none; border-bottom: 1px solid var(--line); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <img src="photos/hero-4-28.jpg" alt="">
+  <div class="top-nav">
+    <span class="brand">вне шума</span>
+    <a href="/" class="back-link">← на главную</a>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Академия вне шума</div>
+    <h1>Больше самостоятельности.<br>Больше доступных территорий.</h1>
+    <p>Мы учимся не выживать в природе. Мы учимся чувствовать себя в ней уверенно.</p>
+    <a href="#" id="registerBtnHero" class="btn btn-on-dark">Зарегистрироваться</a>
+    <div class="hero-note">Регистрация проходит в Telegram</div>
+  </div>
+</div>
+
+<main>
+  <section class="intro wrap">
+    <div class="intro-eyebrow">первый полевой выход · бесплатно</div>
+    <p>«Что делать, если заблудился в лесу» — суббота, 10:00, 3 часа 35 минут, общая группа. Не лекция, а разбор конкретной ситуации: паника и первые действия, поиск воды и ориентиры, костёр — и необходимый минимум, который стоит брать с собой каждый раз.</p>
+  </section>
+
+  <section class="levels wrap">
+    <div class="section-head">
+      <div class="eyebrow">программа встречи</div>
+      <h2>что будет на выходе</h2>
+    </div>
+    <div class="levels-list">
+      <div class="level-item">
+        <div class="level-num mono">10:00</div>
+        <div>
+          <h3>Сбор и вводная</h3>
+          <p>Знакомство и план на день.</p>
+        </div>
+      </div>
+      <div class="level-item">
+        <div class="level-num mono">10:15</div>
+        <div>
+          <h3>Как не потеряться в лесу</h3>
+          <p>Реальные ориентиры вокруг — а не абстрактная теория.</p>
+        </div>
+      </div>
+      <div class="level-item">
+        <div class="level-num mono">11:00</div>
+        <div>
+          <h3>Если потерялся: паника и первые действия</h3>
+          <p>Почему паника — нормальная реакция тела, и что делать в первую очередь.</p>
+        </div>
+      </div>
+      <div class="level-item">
+        <div class="level-num mono">11:45</div>
+        <div>
+          <h3>Вода: как искать, если потерялся</h3>
+          <p>Несколько конкретных признаков, по которым её находят.</p>
+        </div>
+      </div>
+      <div class="level-item">
+        <div class="level-num mono">12:05</div>
+        <div>
+          <h3>Огонь: костёр и травяной чай</h3>
+          <p>Разжигаем сами, у костра.</p>
+        </div>
+      </div>
+      <div class="level-item">
+        <div class="level-num mono">12:35</div>
+        <div>
+          <h3>Необходимый минимум</h3>
+          <p>Что брать с собой — предметы можно подержать в руках.</p>
+        </div>
+      </div>
+      <div class="level-item">
+        <div class="level-num mono">13:05</div>
+        <div>
+          <h3>Итог</h3>
+          <p>Разбор встречи и дата следующей — участникам приходит в Telegram.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="final-cta">
+  <div class="wrap">
+    <div class="final-cta-eyebrow">академия только начинается</div>
+    <h2>Первый шаг —<br>однодневный полевой выход.</h2>
+    <a href="#" id="registerBtnFinal" class="btn btn-on-dark">Зарегистрироваться</a>
+    <div class="hero-note">Регистрация проходит в Telegram</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>© 2026 вне шума · Казань · vneshuma.ru</span>
+    <a href="/">на главную</a>
+  </div>
+</footer>
+
+<script>
+  // Единая точка конфигурации ссылки на бота Академии (аналог env-переменной
+  // на статическом сайте без сборки) — меняется в одном месте, используется
+  // везде, где нужна кнопка регистрации.
+  const ACADEMY_BOT_URL = 'https://t.me/PLACEHOLDER_ACADEMY_BOT';
+
+  document.getElementById('registerBtnHero').href = ACADEMY_BOT_URL;
+  document.getElementById('registerBtnFinal').href = ACADEMY_BOT_URL;
+  document.querySelectorAll('#registerBtnHero, #registerBtnFinal').forEach(a => {
+    a.target = '_blank';
+    a.rel = 'noopener';
+  });
+</script>
+
+</body>
+</html>
