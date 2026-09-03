@@ -97,7 +97,8 @@
   @media (max-width: 560px) { .level-item { grid-template-columns: 1fr; gap: 4px; } }
 
   /* PASSPORT CTA STRIP */
-  .passport-strip { padding: 64px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  #passport .section-head { padding-bottom: 20px; }
+  .passport-strip { padding: 44px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-top: 20px; }
   .passport-strip-inner { display: flex; align-items: center; gap: 48px; flex-wrap: wrap; }
   .passport-strip-text { flex: 1; min-width: 240px; }
   .passport-strip-text p { color: var(--ink-soft); max-width: 480px; font-size: 15px; margin-bottom: 20px; }
@@ -395,10 +396,7 @@
 
       <form id="bookingForm">
 
-        <div class="row-2">
-          <div class="field"><label>имя</label><input type="text" name="name" required></div>
-          <div class="field"><label>телефон</label><input type="tel" name="phone" placeholder="+7 999 000 00 00" required></div>
-        </div>
+        <div class="field"><label>телефон</label><input type="tel" name="phone" placeholder="+7 999 000 00 00" required></div>
 
         <div class="field">
           <label>маршрут</label>
