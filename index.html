@@ -589,7 +589,6 @@
     const data = new FormData(form);
 
     let message = 'ЗАЯВКА · вне шума\n────────────────────────\n\n';
-    message += `имя: ${data.get('name')}\n`;
     message += `телефон: ${data.get('phone')}\n`;
     message += `маршрут: ${data.get('route') || '—'}\n`;
     message += `даты: ${data.get('dateStart')} → ${data.get('dateEnd')}\n`;
