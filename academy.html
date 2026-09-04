@@ -184,10 +184,12 @@
   // Единая точка конфигурации ссылки на бота Академии (аналог env-переменной
   // на статическом сайте без сборки) — меняется в одном месте, используется
   // везде, где нужна кнопка регистрации.
-  const ACADEMY_BOT_URL = 'https://t.me/PLACEHOLDER_ACADEMY_BOT';
+  const ACADEMY_BOT_URL = 'https://t.me/vneshuma_academy_bot';
 
-  document.getElementById('registerBtnHero').href = ACADEMY_BOT_URL;
-  document.getElementById('registerBtnFinal').href = ACADEMY_BOT_URL;
+  // ?start=... — разные deep-link источники для двух кнопок, чтобы бот знал,
+  // с какой именно кнопки пришёл пользователь (first_seen_source в БД).
+  document.getElementById('registerBtnHero').href = ACADEMY_BOT_URL + '?start=website_hero';
+  document.getElementById('registerBtnFinal').href = ACADEMY_BOT_URL + '?start=website_final';
   document.querySelectorAll('#registerBtnHero, #registerBtnFinal').forEach(a => {
     a.target = '_blank';
     a.rel = 'noopener';
