@@ -45,7 +45,7 @@
   .hero-slide.active { opacity: 1; }
   .hero-slide img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.75) contrast(1.05); }
   .hero-slide::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.4) 100%); }
-  .hero-booking-link { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 13px; letter-spacing: 1px; text-decoration: none; z-index: 2; }
+  .hero-booking-link { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 13px; letter-spacing: 1px; text-decoration: none; z-index: 2; text-transform: uppercase; }
   .hero-dots { position: absolute; bottom: 28px; right: 32px; display: flex; gap: 8px; z-index: 2; }
   @media (max-width: 640px) { .hero-dots { right: 20px; } }
   .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); cursor: pointer; transition: background 0.2s; }
@@ -96,13 +96,15 @@
   .level-item p { font-size: 14px; color: var(--ink-soft); }
   @media (max-width: 560px) { .level-item { grid-template-columns: 1fr; gap: 4px; } }
 
-  /* PASSPORT CTA STRIP */
-  #passport .section-head { padding-bottom: 20px; }
-  .passport-strip { padding: 44px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-top: 20px; }
+  /* PASSPORT CTA STRIP — карточка + весь текст в один компактный ряд */
+  .passport-strip { padding: 70px 0 44px; border-bottom: 1px solid var(--line); }
   .passport-strip-inner { display: flex; align-items: center; gap: 48px; flex-wrap: wrap; }
-  .passport-strip-text { flex: 1; min-width: 240px; }
-  .passport-strip-text p { color: var(--ink-soft); max-width: 480px; font-size: 15px; margin-bottom: 20px; }
-  .passport-strip-text h3 { font-size: 20px; margin-bottom: 8px; }
+  .passport-strip-text { flex: 1; min-width: 280px; }
+  .passport-strip-text .eyebrow { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 14px; }
+  .passport-strip-text h2 { font-size: clamp(22px, 2.6vw, 30px); margin-bottom: 10px; }
+  .passport-strip-text p { color: var(--ink-soft); max-width: 480px; font-size: 15px; margin-bottom: 22px; }
+  .passport-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .levels-more:not([hidden]) { padding: 36px 0 8px; }
 
   /* PASSPORT VISUAL MOCKUP */
   .passport-mock { flex-shrink: 0; width: 220px; aspect-ratio: 3/4.2; background: var(--ink); color: #fff; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
@@ -189,6 +191,12 @@
   .cal-cell.avail:hover { border-color: var(--ink); }
   .cal-cell.sel { background: var(--ink); color: var(--bg); }
   .cal-cell.range { background: var(--line); }
+  .cal-cell.booked { background: var(--ink-soft); color: var(--bg); cursor: not-allowed; opacity: 0.55; }
+  .cal-legend { display: flex; gap: 16px; margin-top: 10px; font-size: 11px; color: var(--ink-soft); }
+  .cal-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .cal-legend i { width: 10px; height: 10px; display: inline-block; border: 1px solid var(--line); }
+  .cal-legend i.i-range { background: var(--line); }
+  .cal-legend i.i-booked { background: var(--ink-soft); }
   .cal-summary { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-soft); text-align: center; }
   .cal-summary strong { color: var(--ink); }
 
@@ -230,11 +238,7 @@
 
 <!-- HERO: полноэкранное слайд-шоу, без подписей -->
 <div class="hero-slideshow" id="heroSlides">
-  <div class="hero-slide active"><img src="photos/hero-1-110.jpg" alt=""></div>
-  <div class="hero-slide"><img src="photos/hero-2-10.jpg" alt=""></div>
-  <div class="hero-slide"><img src="photos/hero-3-1039.jpg" alt=""></div>
-  <div class="hero-slide"><img src="photos/hero-4-28.jpg" alt=""></div>
-  <div class="hero-slide"><img src="photos/hero-5-camp.jpg" alt=""></div>
+  <div class="hero-slide active"><img src="photos/hero-2-10.jpg" alt=""></div>
   <a href="#" class="brand hero-brand">вне шума</a>
   <a href="#booking" class="hero-booking-link">бронирование</a>
   <div class="hero-dots" id="heroDots"></div>
@@ -252,14 +256,39 @@
     </div>
   </section>
 
-  <div class="break-photo"><img src="photos/interior-wheel.jpg" alt=""></div>
+  <div class="break-photo"><img src="photos/break-1044.jpg" alt=""></div>
 
   <!-- ПАСПОРТ СЛОЖНОСТИ — реальная прогрессия, 9 уровней -->
   <section id="passport">
-    <div class="section-head wrap">
-      <div class="eyebrow">паспорт сложности · 9 уровней</div>
-      <h2>прогрессия, которая открывается сама</h2>
-      <p>По возвращении с маршрута бот сам поздравляет тебя, присылает пару фото и цитату с этой поездки — и открывает доступ к следующему уровню. Без ручных действий с нашей стороны.</p>
+    <div class="passport-strip">
+      <div class="wrap passport-strip-inner">
+        <div class="passport-mock" aria-hidden="true">
+          <div class="passport-mock-top">
+            <span class="passport-mock-emblem">✦</span>
+            <span class="passport-mock-country">ВНЕ ШУМА</span>
+          </div>
+          <div class="passport-mock-title">Паспорт<br>сложности</div>
+          <div class="passport-mock-stamps">
+            <span class="passport-mock-stamp done">01</span>
+            <span class="passport-mock-stamp">02</span>
+            <span class="passport-mock-stamp">03</span>
+          </div>
+          <div class="passport-mock-code mono">№ VNSH-0001</div>
+        </div>
+        <div class="passport-strip-text">
+          <div class="eyebrow">паспорт сложности · 9 уровней</div>
+          <h2>прогрессия, которая открывается сама</h2>
+          <p>По возвращении с маршрута бот сам поздравляет тебя, присылает пару фото и цитату с этой поездки — и открывает доступ к следующему уровню. Без ручных действий с нашей стороны.</p>
+          <div class="passport-actions">
+            <button type="button" class="btn btn-outline" id="levelsToggle" onclick="
+              const m = document.getElementById('levelsMore');
+              m.hidden = !m.hidden;
+              this.textContent = m.hidden ? 'показать все 9 уровней ↓' : 'свернуть ↑';
+            ">показать все 9 уровней ↓</button>
+            <a href="https://t.me/Talgat_Shakirov" class="btn btn-outline" target="_blank" rel="noopener">написать оператору →</a>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="wrap">
@@ -301,36 +330,6 @@
             <div class="level-num mono">09</div>
             <div><h3>Наставник</h3><p>по приглашению — провести менее опытного человека через маршрут его уровня и передать навыки.</p></div>
           </div>
-        </div>
-      </div>
-      <div style="text-align:center; margin-top: 8px;">
-        <button type="button" class="btn btn-outline" id="levelsToggle" onclick="
-          const m = document.getElementById('levelsMore');
-          m.hidden = !m.hidden;
-          this.textContent = m.hidden ? 'показать все 9 уровней ↓' : 'свернуть ↑';
-        ">показать все 9 уровней ↓</button>
-      </div>
-    </div>
-
-    <div class="passport-strip">
-      <div class="wrap passport-strip-inner">
-        <div class="passport-mock" aria-hidden="true">
-          <div class="passport-mock-top">
-            <span class="passport-mock-emblem">✦</span>
-            <span class="passport-mock-country">ВНЕ ШУМА</span>
-          </div>
-          <div class="passport-mock-title">Паспорт<br>сложности</div>
-          <div class="passport-mock-stamps">
-            <span class="passport-mock-stamp done">01</span>
-            <span class="passport-mock-stamp">02</span>
-            <span class="passport-mock-stamp">03</span>
-          </div>
-          <div class="passport-mock-code mono">№ VNSH-0001</div>
-        </div>
-        <div class="passport-strip-text">
-          <h3>физический прогресс в Telegram-боте</h3>
-          <p>Каждый пройденный маршрут — штамп в паспорте. Следующий уровень открывается только после предыдущего.</p>
-          <a href="https://t.me/Talgat_Shakirov" class="btn btn-outline" target="_blank" rel="noopener">написать оператору →</a>
         </div>
       </div>
     </div>
@@ -429,6 +428,10 @@
             </div>
             <div class="cal-dow" id="calDow"></div>
             <div class="cal-grid" id="calGrid"></div>
+            <div class="cal-legend">
+              <span><i class="i-range"></i>выбранные даты</span>
+              <span><i class="i-booked"></i>уже занято</span>
+            </div>
             <div class="cal-summary" id="calSummary">выбери дату начала</div>
           </div>
         </div>
@@ -496,10 +499,38 @@
     dowRow.innerHTML = DOW.map(d => `<span>${d}</span>`).join('');
     let cursor = new Date(); cursor.setDate(1);
     let start = null, end = null;
+    let bookedRanges = []; // [{start:'YYYY-MM-DD', end:'YYYY-MM-DD'}, ...] — с /api/booked-dates
 
-    function fmt(d) { return d.toISOString().slice(0, 10); }
+    function fmt(d) {
+      // Не toISOString() — она конвертирует в UTC и сдвигает дату на день
+      // для часовых поясов восточнее UTC (в т.ч. Казань, МСК+3).
+      const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
     function human(d) { return d.getDate() + ' ' + MONTHS[d.getMonth()]; }
     function same(a, b) { return a && b && fmt(a) === fmt(b); }
+    function isBooked(date) {
+      const iso = fmt(date);
+      return bookedRanges.some(r => iso >= r.start && iso <= r.end);
+    }
+    function rangeHasBooked(a, b) {
+      const d = new Date(a);
+      while (d <= b) { if (isBooked(d)) return true; d.setDate(d.getDate() + 1); }
+      return false;
+    }
+
+    // Маршруты идут фиксированным числом дней ("2 дня", "7 дней" и т.п.) —
+    // если маршрут выбран, дата окончания достраивается сама по клику на старт.
+    const routeSelect = document.getElementById('route');
+    function routeDuration() {
+      const opt = routeSelect && routeSelect.options[routeSelect.selectedIndex];
+      const m = opt && opt.text.match(/(\d+)\s*(день|дня|дней)/);
+      return m ? parseInt(m[1], 10) : null;
+    }
+
+    fetch('/api/booked-dates').then(r => r.ok ? r.json() : { ranges: [] })
+      .then(data => { bookedRanges = data.ranges || []; render(); })
+      .catch(() => {}); // сеть недоступна — просто без подсветки занятых дней
 
     function render() {
       const y = cursor.getFullYear(), m = cursor.getMonth();
@@ -513,7 +544,9 @@
       for (let d = 1; d <= daysInMonth; d++) {
         const date = new Date(y, m, d);
         let cls = 'cal-cell';
-        if (date < today) cls += ' past'; else cls += ' avail';
+        if (date < today) cls += ' past';
+        else if (isBooked(date)) cls += ' booked';
+        else cls += ' avail';
         if (same(date, start) || same(date, end)) cls += ' sel';
         else if (start && end && date > start && date < end) cls += ' range';
         html += `<div class="${cls}" data-date="${fmt(date)}">${d}</div>`;
@@ -522,26 +555,74 @@
       grid.querySelectorAll('.cal-cell.avail, .cal-cell.sel, .cal-cell.range').forEach(el => {
         el.addEventListener('click', () => pick(el.dataset.date));
       });
+      const days = routeDuration();
       if (start && end) {
         summary.innerHTML = `<strong>${human(start)}</strong> → <strong>${human(end)}</strong>`;
       } else if (start) {
         summary.innerHTML = `от <strong>${human(start)}</strong> — выбери дату окончания`;
+      } else if (days) {
+        summary.innerHTML = `маршрут на <strong>${days} ${daysWord(days)}</strong> — выбери дату старта`;
       } else {
         summary.textContent = 'выбери дату начала';
       }
     }
 
-    function pick(iso) {
-      const d = new Date(iso + 'T00:00:00');
-      if (!start || (start && end)) { start = d; end = null; }
-      else if (d < start) { start = d; end = null; }
-      else if (same(d, start)) { start = null; end = null; }
-      else { end = d; }
+    function daysWord(n) {
+      const n10 = n % 10, n100 = n % 100;
+      if (n100 >= 11 && n100 <= 14) return 'дней';
+      if (n10 === 1) return 'день';
+      if (n10 >= 2 && n10 <= 4) return 'дня';
+      return 'дней';
+    }
+
+    function applyResult() {
       dsInput.value = start ? fmt(start) : '';
       deInput.value = end ? fmt(end) : '';
       display.value = start && end ? `${human(start)} → ${human(end)}` : (start ? `от ${human(start)}` : '');
       render();
+    }
+
+    // Маршрут выбран — один клик задаёт и старт, и авто-рассчитанный конец
+    // (старт + длительность маршрута), без отдельного клика на дату окончания.
+    function pickWithDuration(d, days) {
+      const e = new Date(d); e.setDate(e.getDate() + days - 1);
+      if (rangeHasBooked(d, e)) {
+        summary.innerHTML = 'на эти даты уже есть бронь — выбери другой старт';
+        return;
+      }
+      start = d; end = e;
+      applyResult();
+      setTimeout(() => pop.classList.remove('open'), 350);
+    }
+
+    function pick(iso) {
+      const d = new Date(iso + 'T00:00:00');
+      const days = routeDuration();
+
+      if (days) { pickWithDuration(d, days); return; }
+
+      // Маршрут не выбран (или без известной длительности) — прежний ручной
+      // выбор "от" / "до" двумя кликами.
+      if (!start || (start && end)) { start = d; end = null; }
+      else if (d < start) { start = d; end = null; }
+      else if (same(d, start)) { start = null; end = null; }
+      else if (rangeHasBooked(start, d)) {
+        summary.innerHTML = 'на эти даты уже есть бронь — выбери другой диапазон';
+        return;
+      }
+      else { end = d; }
+      applyResult();
       if (start && end) setTimeout(() => pop.classList.remove('open'), 350);
+    }
+
+    // Смена маршрута: если старт уже выбран — пересчитать конец; в любом
+    // случае перерисовать, чтобы подсказка "маршрут на N дней" обновилась.
+    if (routeSelect) {
+      routeSelect.addEventListener('change', () => {
+        const days = routeDuration();
+        if (start && days) pickWithDuration(start, days);
+        else render();
+      });
     }
 
     display.addEventListener('click', (e) => { e.stopPropagation(); pop.classList.toggle('open'); });
