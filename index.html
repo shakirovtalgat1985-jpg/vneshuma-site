@@ -14,7 +14,7 @@
 <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 <style>
   :root {
-    --bg: #FFFFFF;
+    --bg: #FAF7F2;
     --ink: #0A0A0A;
     --ink-soft: #5A5A5A;
     --line: #DADADA;
@@ -50,6 +50,14 @@
   @media (max-width: 640px) { .hero-dots { right: 20px; } }
   .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); cursor: pointer; transition: background 0.2s; }
   .hero-dot.active { background: #fff; }
+
+  /* PHOTO STRIP — бесконечная бегущая лента, сразу под хиро */
+  .photo-strip { width: 100%; overflow: hidden; background: #0A0A0A; }
+  .photo-strip-track { display: flex; width: max-content; animation: photoStripScroll 40s linear infinite; }
+  .photo-strip-track img { height: 260px; width: auto; object-fit: cover; flex-shrink: 0; margin-right: 2px; filter: saturate(0.85) contrast(1.05); }
+  @media (max-width: 640px) { .photo-strip-track img { height: 160px; } }
+  @keyframes photoStripScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .photo-strip:hover .photo-strip-track { animation-play-state: paused; }
 
   /* INTRO / PHILOSOPHY */
   .intro { padding: 110px 0 90px; text-align: center; }
@@ -244,6 +252,18 @@
   <div class="hero-dots" id="heroDots"></div>
 </div>
 
+<!-- БЕГУЩАЯ ЛЕНТА — бесконечная прокрутка фото, сразу под хиро -->
+<div class="photo-strip">
+  <div class="photo-strip-track" id="photoStripTrack">
+    <img src="photos/strip/strip-1.jpg" alt="">
+    <img src="photos/strip/strip-2.jpg" alt="">
+    <img src="photos/strip/strip-3.jpg" alt="">
+    <img src="photos/strip/strip-4.jpg" alt="">
+    <img src="photos/strip/strip-5.jpg" alt="">
+    <img src="photos/strip/strip-6.jpg" alt="">
+  </div>
+</div>
+
 <main>
 
   <!-- INTRO / ФИЛОСОФИЯ — сжато, по сути, без длинных абзацев -->
@@ -278,14 +298,13 @@
         <div class="passport-strip-text">
           <div class="eyebrow">паспорт сложности · 9 уровней</div>
           <h2>прогрессия, которая открывается сама</h2>
-          <p>По возвращении с маршрута бот сам поздравляет тебя, присылает пару фото и цитату с этой поездки — и открывает доступ к следующему уровню. Без ручных действий с нашей стороны.</p>
+          <p>Не все уровни открыты сразу. Каждый пройденный маршрут открывает следующий — на новую территорию, сложнее и дальше от города.</p>
           <div class="passport-actions">
             <button type="button" class="btn btn-outline" id="levelsToggle" onclick="
               const m = document.getElementById('levelsMore');
               m.hidden = !m.hidden;
               this.textContent = m.hidden ? 'показать все 9 уровней ↓' : 'свернуть ↑';
             ">показать все 9 уровней ↓</button>
-            <a href="https://t.me/Talgat_Shakirov" class="btn btn-outline" target="_blank" rel="noopener">написать оператору →</a>
           </div>
         </div>
       </div>
@@ -630,6 +649,14 @@
     document.getElementById('calNext').addEventListener('click', () => { cursor.setMonth(cursor.getMonth() + 1); render(); });
     document.addEventListener('click', (e) => { if (!pop.contains(e.target) && e.target !== display) pop.classList.remove('open'); });
     render();
+  })();
+
+  // Бегущая лента фото — дублируем набор один раз для бесшовной прокрутки
+  // (анимация едет ровно на -50%, т.е. на длину одного полного набора)
+  (function photoStrip(){
+    const track = document.getElementById('photoStripTrack');
+    if (!track) return;
+    track.innerHTML += track.innerHTML;
   })();
 
   // Hero slideshow — автопрокрутка + точки
