@@ -220,6 +220,15 @@
   .footer-links { display: flex; gap: 20px; }
   .footer-links a { text-decoration: none; border-bottom: 1px solid var(--line); }
 
+  /* FLOATING CONTACT WIDGET — плавающая кнопка связи, всегда на виду */
+  .float-contact { position: fixed; bottom: 24px; right: 24px; z-index: 50; display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .float-contact-label { background: var(--ink); color: #fff; font-size: 13px; letter-spacing: 0.5px; padding: 10px 16px; border-radius: 20px; white-space: nowrap; opacity: 0; transform: translateX(8px); transition: opacity 0.2s, transform 0.2s; pointer-events: none; }
+  .float-contact:hover .float-contact-label { opacity: 1; transform: translateX(0); }
+  .float-contact-icon { width: 54px; height: 54px; border-radius: 50%; background: var(--ink); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.25); transition: transform 0.2s; }
+  .float-contact:hover .float-contact-icon { transform: scale(1.06); }
+  .float-contact-icon svg { width: 24px; height: 24px; }
+  @media (max-width: 640px) { .float-contact { bottom: 16px; right: 16px; } .float-contact-label { display: none; } .float-contact-icon { width: 48px; height: 48px; } }
+
   /* MODAL — детализация маршрута */
   .tile, .cat-row { cursor: pointer; }
   .modal-overlay { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(10,10,10,0.85); padding: 24px; overflow-y: auto; }
@@ -468,6 +477,16 @@
     </div>
   </div>
 </footer>
+
+<!-- ПЛАВАЮЩАЯ КНОПКА СВЯЗИ — всегда на виду, снижает трение перед контактом -->
+<a href="https://t.me/Talgat_Shakirov" target="_blank" rel="noopener" class="float-contact">
+  <span class="float-contact-label">Пишите нам</span>
+  <span class="float-contact-icon">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M21.5 3.5L2.5 11l6 2.2m13-9.7L15.8 20l-4.7-6.3m10.4-10.2L9.5 14.3" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </span>
+</a>
 
 <script>
   // Календарь бронирования — один попап, клик "от", клик "до"
