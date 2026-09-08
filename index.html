@@ -14,7 +14,7 @@
 <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 <style>
   :root {
-    --bg: #F5F0E8;
+    --bg: #FDFAF2;
     --ink: #0A0A0A;
     --ink-soft: #5A5A5A;
     --line: #DADADA;
@@ -124,6 +124,27 @@
   .passport-mock-stamp { width: 34px; height: 34px; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; letter-spacing: 1px; color: rgba(255,255,255,0.5); }
   .passport-mock-stamp.done { border-color: #fff; color: #fff; transform: rotate(-8deg); }
   .passport-mock-code { font-size: 11px; letter-spacing: 1px; color: rgba(255,255,255,0.6); }
+
+  /* PROCESS — как проходит поездка, 4 шага */
+  .process { padding: 90px 0 100px; }
+  .process-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-top: 8px; }
+  @media (max-width: 860px) { .process-list { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .process-list { grid-template-columns: 1fr; } }
+  .process-item { padding-top: 20px; border-top: 1px solid var(--line-strong); }
+  .process-num { font-size: 13px; color: var(--ink-soft); letter-spacing: 1px; margin-bottom: 14px; }
+  .process-item h3 { font-size: 17px; margin-bottom: 8px; }
+  .process-item p { font-size: 14px; color: var(--ink-soft); }
+
+  /* GUIDE — кто ведёт группу, доверие к человеку */
+  .guide { padding: 0 0 100px; }
+  .guide-card { display: flex; align-items: center; gap: 40px; background: var(--ink); color: #fff; padding: 40px; flex-wrap: wrap; }
+  .guide-photo { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: rgba(255,255,255,0.1); }
+  .guide-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .guide-text h3 { font-size: 22px; margin-bottom: 4px; }
+  .guide-role { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.6; margin-bottom: 14px; }
+  .guide-text p { font-size: 15px; opacity: 0.85; max-width: 520px; margin-bottom: 16px; }
+  .guide-links a { text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.4); font-size: 14px; }
+  @media (max-width: 560px) { .guide-card { padding: 32px 24px; gap: 24px; } .guide-photo { width: 88px; height: 88px; } }
 
   /* CATALOG — plain list, no cards */
   .catalog { padding: 40px 0 20px; }
@@ -296,9 +317,71 @@
     </div>
   </section>
 
+  <!-- КАК ПРОХОДИТ ПОЕЗДКА — снимает тревогу "что будет после клика на бронирование" -->
+  <section class="process wrap" id="process">
+    <div class="section-head">
+      <div class="eyebrow">как проходит поездка</div>
+      <h2>четыре шага до костра</h2>
+    </div>
+    <div class="process-list">
+      <div class="process-item">
+        <div class="process-num mono">01</div>
+        <div><h3>Бронируете</h3><p>Выбираете даты в календаре, оставляете телефон — мы на связи в течение 15 минут.</p></div>
+      </div>
+      <div class="process-item">
+        <div class="process-num mono">02</div>
+        <div><h3>Инструктаж</h3><p>За пару дней до выезда созваниваемся: что взять с собой, что не взять, разбираем маршрут.</p></div>
+      </div>
+      <div class="process-item">
+        <div class="process-num mono">03</div>
+        <div><h3>Встреча в Казани</h3><p>09:00, загружаемся, выезжаем на подготовленном Jimny.</p></div>
+      </div>
+      <div class="process-item">
+        <div class="process-num mono">04</div>
+        <div><h3>Маршрут с проводником</h3><p>Три дня рядом с вами: покажем, научим, подстрахуем. Вы не одни ни разу.</p></div>
+      </div>
+    </div>
+  </section>
+
   <div class="break-photo"><img src="photos/break-1044.jpg" alt=""></div>
 
-  <!-- ПАСПОРТ СЛОЖНОСТИ — реальная прогрессия, 9 уровней -->
+  <!-- ВЕСЬ КАТАЛОГ — полный список маршрутов, прямое бронирование -->
+  <section id="routes">
+    <div class="section-head wrap">
+      <div class="eyebrow">маршрут</div>
+      <h2>Балымеры</h2>
+      <p>Дубовый лес на высокой террасе над Волгой, рядом древние курганы Волжской Булгарии. Свой лагерь с нуля, огонь, разведка, автономный быт — три дня по-настоящему в тишине.</p>
+    </div>
+    <div class="wrap">
+      <div class="catalog">
+        <div class="cat-row" onclick="openRoute('balymery')">
+          <div class="cat-days mono">3 дня / 2 ночи</div>
+          <div class="cat-mid"><h4>Балымеры</h4><p>~100 км от Казани. Огонь, навигация, разведка, автономный лагерь. Продвинутый уровень.</p></div>
+          <div class="cat-price mono">30 000 ₽</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- КТО ВЕДЁТ — доверие к человеку, важнее, чем к машине, когда речь о сопровождении -->
+  <section class="guide wrap" id="guide">
+    <div class="section-head">
+      <div class="eyebrow">кто ведёт</div>
+      <h2>это не аренда — это сопровождение</h2>
+    </div>
+    <div class="guide-card">
+      <div class="guide-text">
+        <h3>Талгат</h3>
+        <div class="guide-role">основатель «вне шума»</div>
+        <p>Веду группы сам — не передаю маршрут случайному инструктору. Каждый выезд проверен лично, каждая точка лагеря выбрана заранее.</p>
+        <div class="guide-links">
+          <a href="https://t.me/Talgat_Shakirov" target="_blank" rel="noopener">telegram</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ПАСПОРТ СЛОЖНОСТИ — реальная прогрессия, 9 уровней; здесь — как бонус "куда расти дальше", не барьер перед покупкой -->
   <section id="passport">
     <div class="passport-strip">
       <div class="wrap passport-strip-inner">
@@ -369,24 +452,6 @@
             <div class="level-num mono">09</div>
             <div><h3>Наставник</h3><p>по приглашению — провести менее опытного человека через маршрут его уровня и передать навыки.</p></div>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ВЕСЬ КАТАЛОГ — полный список маршрутов, прямое бронирование -->
-  <section id="routes">
-    <div class="section-head wrap">
-      <div class="eyebrow">маршрут</div>
-      <h2>Балымеры</h2>
-      <p>Дубовый лес на высокой террасе над Волгой, рядом древние курганы Волжской Булгарии. Свой лагерь с нуля, огонь, разведка, автономный быт — три дня по-настоящему в тишине.</p>
-    </div>
-    <div class="wrap">
-      <div class="catalog">
-        <div class="cat-row" onclick="openRoute('balymery')">
-          <div class="cat-days mono">3 дня / 2 ночи</div>
-          <div class="cat-mid"><h4>Балымеры</h4><p>~100 км от Казани. Огонь, навигация, разведка, автономный лагерь. Продвинутый уровень.</p></div>
-          <div class="cat-price mono">30 000 ₽</div>
         </div>
       </div>
     </div>
