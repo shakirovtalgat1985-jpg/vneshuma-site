@@ -260,10 +260,10 @@
   @media (max-width: 640px) { .float-contact { bottom: 16px; right: 16px; } .float-contact-label { display: none; } .float-contact-icon { width: 48px; height: 48px; } }
 
   /* SPIN BADGE — крутящийся значок-стикер джимни, справа */
-  .spin-badge { position: fixed; top: 110px; right: 28px; z-index: 40; width: 92px; height: 92px; pointer-events: none; }
-  .spin-badge img { width: 100%; height: 100%; object-fit: contain; animation: spinBadge 14s linear infinite; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3)); }
-  @keyframes spinBadge { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  @media (max-width: 640px) { .spin-badge { width: 62px; height: 62px; top: 90px; right: 14px; } }
+.spin-badge { position: fixed; top: 110px; right: 28px; z-index: 40; width: 150px; height: 150px; pointer-events: none; perspective: 600px; }
+    .spin-badge img { width: 100%; height: 100%; object-fit: contain; animation: spinBadge 5s linear infinite; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3)); transform-style: preserve-3d; }
+    @keyframes spinBadge { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+    @media (max-width: 640px) { .spin-badge { width: 100px; height: 100px; top: 90px; right: 14px; } }
 
   /* MODAL — детализация маршрута */
   .tile, .cat-row { cursor: pointer; }
