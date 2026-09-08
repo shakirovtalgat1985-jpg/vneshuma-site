@@ -235,6 +235,15 @@
   .academy-teaser h2 { font-size: clamp(26px, 3.6vw, 36px); margin-bottom: 18px; text-transform: lowercase; }
   .academy-teaser p { color: var(--ink-soft); max-width: 480px; margin: 0 auto 32px; }
 
+  /* PASSPORT COMPACT — тихий бонус внизу, рядом с академией, не отвлекает от покупки */
+  .passport-compact { padding: 0 0 100px; text-align: center; border-top: 1px solid var(--line); padding-top: 70px; }
+  .passport-compact .eyebrow { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 10px; }
+  .passport-compact h3 { font-size: 18px; font-weight: 600; margin-bottom: 10px; color: var(--ink-soft); }
+  .passport-compact p { font-size: 14px; color: var(--ink-soft); max-width: 460px; margin: 0 auto 20px; }
+  .passport-toggle { background: none; border: none; font-family: inherit; font-size: 13px; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 0; }
+  .passport-toggle:hover { color: var(--ink); }
+  .passport-compact .levels-list { margin-top: 36px; text-align: left; }
+
   /* FOOTER */
   footer { padding: 48px 0; border-top: 1px solid var(--line); }
   .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; font-size: 14px; color: var(--ink-soft); }
@@ -249,6 +258,12 @@
   .float-contact:hover .float-contact-icon { transform: scale(1.06); }
   .float-contact-icon svg { width: 24px; height: 24px; }
   @media (max-width: 640px) { .float-contact { bottom: 16px; right: 16px; } .float-contact-label { display: none; } .float-contact-icon { width: 48px; height: 48px; } }
+
+  /* SPIN BADGE — крутящийся значок-стикер джимни, справа */
+  .spin-badge { position: fixed; top: 110px; right: 28px; z-index: 40; width: 92px; height: 92px; pointer-events: none; }
+  .spin-badge img { width: 100%; height: 100%; object-fit: contain; animation: spinBadge 14s linear infinite; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3)); }
+  @keyframes spinBadge { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @media (max-width: 640px) { .spin-badge { width: 62px; height: 62px; top: 90px; right: 14px; } }
 
   /* MODAL — детализация маршрута */
   .tile, .cat-row { cursor: pointer; }
@@ -301,6 +316,10 @@
     <img src="photos/strip/strip-4.jpg" alt="">
     <img src="photos/strip/strip-5.jpg" alt="">
     <img src="photos/strip/strip-6.jpg" alt="">
+    <img src="photos/strip/strip-7.jpg" alt="">
+    <img src="photos/strip/strip-8.jpg" alt="">
+    <img src="photos/strip/strip-9.jpg" alt="">
+    <img src="photos/strip/strip-10.jpg" alt="">
   </div>
 </div>
 
@@ -381,81 +400,6 @@
   </section>
 
   <!-- ПАСПОРТ СЛОЖНОСТИ — реальная прогрессия, 9 уровней; здесь — как бонус "куда расти дальше", не барьер перед покупкой -->
-  <section id="passport">
-    <div class="passport-strip">
-      <div class="wrap passport-strip-inner">
-        <div class="passport-mock" aria-hidden="true">
-          <div class="passport-mock-top">
-            <span class="passport-mock-emblem">✦</span>
-            <span class="passport-mock-country">ВНЕ ШУМА</span>
-          </div>
-          <div class="passport-mock-title">Паспорт<br>сложности</div>
-          <div class="passport-mock-stamps">
-            <span class="passport-mock-stamp done">01</span>
-            <span class="passport-mock-stamp">02</span>
-            <span class="passport-mock-stamp">03</span>
-          </div>
-          <div class="passport-mock-code mono">№ VNSH-0001</div>
-        </div>
-        <div class="passport-strip-text">
-          <div class="eyebrow">паспорт сложности · 9 уровней</div>
-          <h2>прогрессия, которая открывается сама</h2>
-          <p>Не все уровни открыты сразу. Каждый пройденный маршрут открывает следующий — на новую территорию, сложнее и дальше от города.</p>
-          <div class="passport-actions">
-            <button type="button" class="btn btn-outline" id="levelsToggle" onclick="
-              const m = document.getElementById('levelsMore');
-              m.hidden = !m.hidden;
-              this.textContent = m.hidden ? 'показать все 9 уровней ↓' : 'свернуть ↑';
-            ">показать все 9 уровней ↓</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="wrap">
-      <div class="levels-list">
-        <div class="levels-more" id="levelsMore" hidden>
-          <div class="level-item">
-            <div class="level-num mono">01</div>
-            <div><h3>Первый выезд</h3><p>1–2 дня · до 100 км — развести костёр и приготовить простой ужин на мангале самостоятельно.</p></div>
-          </div>
-          <div class="level-item">
-            <div class="level-num mono">02</div>
-            <div><h3>Свой лагерь</h3><p>2–3 дня · до 200 км — поставить лагерь без подсказок и сварить уху на костре.</p></div>
-          </div>
-          <div class="level-item">
-            <div class="level-num mono">03</div>
-            <div><h3>Чтение места</h3><p>3 дня · без сети — проложить путь по бумажной карте и выйти к точке без навигатора.</p></div>
-          </div>
-          <div class="level-item">
-            <div class="level-num mono">04</div>
-            <div><h3>Испытание</h3><p>3–4 дня — провести вечер без телефона: час у костра, только тишина и разговор.</p></div>
-          </div>
-          <div class="level-item">
-            <div class="level-num mono">05</div>
-            <div><h3>Автономность</h3><p>4–5 дней — добыть воду из природного источника и отфильтровать её для питья.</p></div>
-          </div>
-          <div class="level-item">
-            <div class="level-num mono">06</div>
-            <div><h3>Экспедиция</h3><p>5+ дней · новый регион — разбить лагерь и наладить быт с нуля там, где нет готовой инфраструктуры.</p></div>
-          </div>
-          <div class="level-item">
-            <div class="level-num mono">07</div>
-            <div><h3>Горы</h3><p>по приглашению · Башкирия — асфальтированный горный серпантин: подняться и спуститься, контролируя скорость на затяжных участках.</p></div>
-          </div>
-          <div class="level-item">
-            <div class="level-num mono">08</div>
-            <div><h3>Броды и ущелья</h3><p>по приглашению — известный неглубокий брод и узкое ущелье, разведанное место, не вслепую.</p></div>
-          </div>
-          <div class="level-item">
-            <div class="level-num mono">09</div>
-            <div><h3>Наставник</h3><p>по приглашению — провести менее опытного человека через маршрут его уровня и передать навыки.</p></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- БРОНИРОВАНИЕ -->
   <section class="booking wrap" id="booking">
     <div class="booking-inner">
@@ -511,6 +455,59 @@
     <p>Больше самостоятельности. Больше доступных территорий. Учимся не выживать в природе, а чувствовать себя в ней уверенно.</p>
     <a href="/academy" class="btn btn-outline">узнать об академии →</a>
   </section>
+
+  <!-- ПАСПОРТ СЛОЖНОСТИ — внизу, тихим бонусом, не отвлекает от покупки -->
+  <section class="passport-compact wrap" id="passport">
+    <div class="eyebrow">паспорт сложности · 9 уровней</div>
+    <h3>прогрессия, которая открывается сама</h3>
+    <p>Не все уровни открыты сразу. Каждый пройденный маршрут открывает следующий — на новую территорию, сложнее и дальше от города.</p>
+    <button type="button" class="passport-toggle" id="levelsToggle" onclick="
+      const m = document.getElementById('levelsMore');
+      m.hidden = !m.hidden;
+      this.textContent = m.hidden ? 'показать все 9 уровней ↓' : 'свернуть ↑';
+    ">показать все 9 уровней ↓</button>
+
+    <div class="levels-list">
+      <div class="levels-more" id="levelsMore" hidden>
+        <div class="level-item">
+          <div class="level-num mono">01</div>
+          <div><h3>Первый выезд</h3><p>1–2 дня · до 100 км — развести костёр и приготовить простой ужин на мангале самостоятельно.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">02</div>
+          <div><h3>Свой лагерь</h3><p>2–3 дня · до 200 км — поставить лагерь без подсказок и сварить уху на костре.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">03</div>
+          <div><h3>Чтение места</h3><p>3 дня · без сети — проложить путь по бумажной карте и выйти к точке без навигатора.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">04</div>
+          <div><h3>Испытание</h3><p>3–4 дня — провести вечер без телефона: час у костра, только тишина и разговор.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">05</div>
+          <div><h3>Автономность</h3><p>4–5 дней — добыть воду из природного источника и отфильтровать её для питья.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">06</div>
+          <div><h3>Экспедиция</h3><p>5+ дней · новый регион — разбить лагерь и наладить быт с нуля там, где нет готовой инфраструктуры.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">07</div>
+          <div><h3>Горы</h3><p>по приглашению · Башкирия — асфальтированный горный серпантин: подняться и спуститься, контролируя скорость на затяжных участках.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">08</div>
+          <div><h3>Броды и ущелья</h3><p>по приглашению — известный неглубокий брод и узкое ущелье, разведанное место, не вслепую.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">09</div>
+          <div><h3>Наставник</h3><p>по приглашению — провести менее опытного человека через маршрут его уровня и передать навыки.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <!-- МОДАЛЬНОЕ ОКНО — детализация маршрута -->
@@ -551,6 +548,11 @@
     </svg>
   </span>
 </a>
+
+<!-- КРУТЯЩИЙСЯ ЗНАЧОК — декоративный стикер джимни, справа -->
+<div class="spin-badge" aria-hidden="true">
+  <img src="photos/badge-jimny.png" alt="">
+</div>
 
 <script>
   // Календарь бронирования — один попап, клик "от", клик "до"
