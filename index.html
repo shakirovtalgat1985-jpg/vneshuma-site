@@ -51,13 +51,13 @@
   .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); cursor: pointer; transition: background 0.2s; }
   .hero-dot.active { background: #fff; }
 
-  /* PHOTO STRIP — бесконечная бегущая лента, сразу под хиро */
-  .photo-strip { width: 100%; overflow: hidden; background: #0A0A0A; }
-  .photo-strip-track { display: flex; width: max-content; animation: photoStripScroll 40s linear infinite; }
-  .photo-strip-track img { height: 260px; width: auto; object-fit: cover; flex-shrink: 0; margin-right: 2px; filter: saturate(0.85) contrast(1.05); }
+  /* PHOTO STRIP — бегущая лента, сразу под хиро; автопрокрутка + свайп/перетаскивание */
+  .photo-strip { width: 100%; overflow-x: auto; overflow-y: hidden; background: #0A0A0A; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
+  .photo-strip::-webkit-scrollbar { display: none; }
+  .photo-strip-track { display: flex; width: max-content; cursor: grab; user-select: none; }
+  .photo-strip-track.dragging { cursor: grabbing; }
+  .photo-strip-track img { height: 260px; width: auto; object-fit: cover; flex-shrink: 0; margin-right: 2px; filter: saturate(0.85) contrast(1.05); pointer-events: none; }
   @media (max-width: 640px) { .photo-strip-track img { height: 160px; } }
-  @keyframes photoStripScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  .photo-strip:hover .photo-strip-track { animation-play-state: paused; }
 
   /* INTRO / PHILOSOPHY */
   .intro { padding: 110px 0 90px; text-align: center; }
@@ -297,7 +297,6 @@
 <div class="photo-strip">
   <div class="photo-strip-track" id="photoStripTrack">
     <img src="photos/strip/strip-1.jpg" alt="">
-    <img src="photos/strip/strip-2.jpg" alt="">
     <img src="photos/strip/strip-3.jpg" alt="">
     <img src="photos/strip/strip-4.jpg" alt="">
     <img src="photos/strip/strip-5.jpg" alt="">
@@ -704,12 +703,74 @@
     render();
   })();
 
-  // Бегущая лента фото — дублируем набор один раз для бесшовной прокрутки
-  // (анимация едет ровно на -50%, т.е. на длину одного полного набора)
+  // Бегущая лента фото — дублируем набор один раз для бесшовного цикла,
+  // едем автопрокруткой (requestAnimationFrame), но человек может сам
+  // перетащить мышкой или свайпнуть пальцем — тогда автопрокрутка
+  // приостанавливается и возобновляется через паузу после отпускания.
   (function photoStrip(){
+    const strip = document.querySelector('.photo-strip');
     const track = document.getElementById('photoStripTrack');
-    if (!track) return;
-    track.innerHTML += track.innerHTML;
+    if (!strip || !track) return;
+    const originalHTML = track.innerHTML;
+    track.innerHTML = originalHTML + originalHTML;
+
+    let setWidth = 0;
+    function measure() { setWidth = track.scrollWidth / 2; }
+    measure();
+    window.addEventListener('resize', measure);
+
+    let autoplay = true;
+    let resumeTimer = null;
+    const SPEED = 0.6; // px за кадр
+
+    function tick() {
+      if (autoplay && setWidth) {
+        strip.scrollLeft += SPEED;
+        if (strip.scrollLeft >= setWidth) strip.scrollLeft -= setWidth;
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    function pause() {
+      autoplay = false;
+      clearTimeout(resumeTimer);
+    }
+    function scheduleResume() {
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(() => { autoplay = true; }, 2500);
+    }
+
+    // Перетаскивание мышкой
+    let dragging = false, startX = 0, startScroll = 0;
+    track.addEventListener('mousedown', (e) => {
+      dragging = true;
+      track.classList.add('dragging');
+      startX = e.pageX;
+      startScroll = strip.scrollLeft;
+      pause();
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!dragging) return;
+      strip.scrollLeft = startScroll - (e.pageX - startX);
+    });
+    window.addEventListener('mouseup', () => {
+      if (!dragging) return;
+      dragging = false;
+      track.classList.remove('dragging');
+      if (setWidth) {
+        if (strip.scrollLeft >= setWidth) strip.scrollLeft -= setWidth;
+        else if (strip.scrollLeft < 0) strip.scrollLeft += setWidth;
+      }
+      scheduleResume();
+    });
+
+    // Свайп пальцем — используем нативный скролл контейнера,
+    // просто ставим на паузу автопрокрутку на время касания.
+    strip.addEventListener('touchstart', pause, { passive: true });
+    strip.addEventListener('touchend', scheduleResume, { passive: true });
+
+    strip.addEventListener('wheel', () => { pause(); scheduleResume(); }, { passive: true });
   })();
 
   // Hero slideshow — автопрокрутка + точки
