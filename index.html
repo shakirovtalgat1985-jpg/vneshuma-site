@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48 64x64 128x128 256x256">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>вне шума · путешествия на подготовленном внедорожнике</title>
@@ -52,7 +56,7 @@
   .hero-dot.active { background: #fff; }
 
   /* PHOTO STRIP — бегущая лента, сразу под хиро; автопрокрутка + свайп/перетаскивание */
-  .photo-strip { width: 100%; overflow-x: auto; overflow-y: hidden; background: #0A0A0A; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
+  .photo-strip { width: 100%; overflow-x: auto; overflow-y: hidden; background: #0A0A0A; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; will-change: scroll-position; margin-top: -1px; position: relative; }
   .photo-strip::-webkit-scrollbar { display: none; }
   .photo-strip-track { display: flex; width: max-content; cursor: grab; user-select: none; }
   .photo-strip-track.dragging { cursor: grabbing; }
@@ -258,12 +262,6 @@
   .float-contact:hover .float-contact-icon { transform: scale(1.06); }
   .float-contact-icon svg { width: 24px; height: 24px; }
   @media (max-width: 640px) { .float-contact { bottom: 16px; right: 16px; } .float-contact-label { display: none; } .float-contact-icon { width: 48px; height: 48px; } }
-
-  /* SPIN BADGE — крутящийся значок-стикер джимни, справа */
-.spin-badge { position: fixed; top: 110px; right: 28px; z-index: 40; width: 150px; height: 150px; pointer-events: none; perspective: 600px; }
-    .spin-badge img { width: 100%; height: 100%; object-fit: contain; animation: spinBadge 5s linear infinite; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3)); transform-style: preserve-3d; }
-    @keyframes spinBadge { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
-    @media (max-width: 640px) { .spin-badge { width: 100px; height: 100px; top: 90px; right: 14px; } }
 
   /* MODAL — детализация маршрута */
   .tile, .cat-row { cursor: pointer; }
@@ -548,11 +546,6 @@
     </svg>
   </span>
 </a>
-
-<!-- КРУТЯЩИЙСЯ ЗНАЧОК — декоративный стикер джимни, справа -->
-<div class="spin-badge" aria-hidden="true">
-  <img src="photos/badge-jimny.png" alt="">
-</div>
 
 <script>
   // Календарь бронирования — один попап, клик "от", клик "до"
