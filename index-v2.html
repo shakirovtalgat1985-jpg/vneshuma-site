@@ -189,6 +189,13 @@
   @media (max-width: 860px) { .vehicle-grid { grid-template-columns: 1fr; gap: 36px; } }
   .vehicle-photo { aspect-ratio: 4/3; overflow: hidden; }
   .vehicle-photo img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85) contrast(1.05); }
+
+  /* КАРТОЧКА АВТО НА БЕЛОМ — как "варианты цвета" у референса, кликабельная */
+  .vehicle-card { background: #fff; border: 1px solid var(--line); padding: 40px 28px 28px; text-align: center; cursor: pointer; transition: box-shadow 0.2s; }
+  .vehicle-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  .vehicle-card img { max-width: 82%; margin: 0 auto 22px; filter: none; }
+  .vehicle-card-name { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .vehicle-card-link { font-size: 13px; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; }
   .vehicle-name { font-size: clamp(24px, 3vw, 32px); margin-bottom: 6px; }
   .vehicle-tag { color: var(--ink-soft); font-size: 14px; margin-bottom: 28px; }
   .vehicle-specs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; border-top: 1px solid var(--line); }
@@ -300,6 +307,12 @@
     padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
   }
   .cal-pop.open { display: block; }
+  /* БОЛЬШОЙ ВИДИМЫЙ КАЛЕНДАРЬ — не попап, всегда открыт прямо на странице */
+  .availability { padding: 100px 0; border-top: 1px solid var(--line); }
+  .cal-inline { display: block !important; position: static; width: 100%; max-width: 460px; margin: 0 auto;
+    box-shadow: none; padding: 32px; }
+  .cal-inline .cal-grid { gap: 6px; }
+  .cal-inline .cal-cell { font-size: 14px; }
   .cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .cal-nav-btn { background: none; border: 1px solid var(--line); width: 28px; height: 28px; cursor: pointer; font-size: 15px; color: var(--ink); }
   .cal-nav-btn:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
@@ -487,7 +500,11 @@
   <!-- ЕДИНСТВЕННЫЙ АВТОМОБИЛЬ — карточка с полными техническими деталями -->
   <section class="vehicle wrap" id="vehicle">
     <div class="vehicle-grid">
-      <div class="vehicle-photo"><img src="photos/hero-1-110.jpg" alt="Suzuki Jimny"></div>
+      <div class="vehicle-card" onclick="openVehicle()">
+        <img src="photos/hero-1-110.jpg" alt="Suzuki Jimny">
+        <div class="vehicle-card-name">Suzuki Jimny · наш авто</div>
+        <div class="vehicle-card-link">Вид ›</div>
+      </div>
       <div>
         <h2 class="vehicle-name">Suzuki Jimny</h2>
         <div class="vehicle-tag">палатка на крыше · снаряжён для автономного лагеря</div>
@@ -568,45 +585,48 @@
 
   <!-- ПАСПОРТ СЛОЖНОСТИ — реальная прогрессия, 9 уровней; здесь — как бонус "куда расти дальше", не барьер перед покупкой -->
   <!-- БРОНИРОВАНИЕ -->
+  <!-- ДОСТУПНОСТЬ — большой видимый календарь прямо на странице, как у референса -->
+  <section class="availability wrap" id="availability">
+    <div class="section-head" style="padding-top:0;">
+      <div class="eyebrow">проверьте доступность</div>
+      <h2>Выберите даты поездки.</h2>
+      <p>Живой календарь занятости маршрута «Балымеры» — сразу видно, что свободно.</p>
+    </div>
+    <input type="hidden" id="route" value="Балымеры · 3 дня / 2 ночи">
+    <div class="cal-pop cal-inline" id="calPop">
+      <div class="cal-nav">
+        <button type="button" class="cal-nav-btn" id="calPrev">‹</button>
+        <div class="cal-title mono" id="calTitle"></div>
+        <button type="button" class="cal-nav-btn" id="calNext">›</button>
+      </div>
+      <div class="cal-dow" id="calDow"></div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend">
+        <span><i class="i-range"></i>выбранные даты</span>
+        <span><i class="i-booked"></i>уже занято</span>
+      </div>
+      <div class="cal-summary" id="calSummary">выбери дату начала</div>
+    </div>
+  </section>
+
   <section class="booking wrap" id="booking">
     <div class="booking-inner">
       <h2>бронирование</h2>
-      <p class="booking-sub">Заполни форму — мы проверим даты и свяжемся в течение 15 минут. Заявка уходит напрямую в Telegram.</p>
+      <p class="booking-sub">Даты выбраны выше? Осталось оставить телефон — свяжемся в течение 15 минут. Заявка уходит напрямую в Telegram.</p>
 
       <form id="bookingForm">
 
         <div class="field"><label>телефон</label><input type="tel" name="phone" placeholder="+7 999 000 00 00" required></div>
 
         <div class="field">
-          <label>маршрут</label>
-          <select name="route" id="route">
-            <option value="">ещё не выбрал — подскажите</option>
-            <option value="Балымеры · 3 дня / 2 ночи">Балымеры · 3 дня / 2 ночи</option>
-          </select>
-        </div>
-
-        <div class="field cal-field">
-          <label>даты поездки</label>
-          <input type="text" id="datesDisplay" readonly placeholder="выбрать даты" autocomplete="off">
+          <label>выбранные даты</label>
+          <input type="text" id="datesDisplay" readonly placeholder="выбери даты в календаре выше" autocomplete="off">
           <input type="hidden" name="dateStart" id="dateStart" required>
           <input type="hidden" name="dateEnd" id="dateEnd" required>
-          <div class="cal-pop" id="calPop">
-            <div class="cal-nav">
-              <button type="button" class="cal-nav-btn" id="calPrev">‹</button>
-              <div class="cal-title mono" id="calTitle"></div>
-              <button type="button" class="cal-nav-btn" id="calNext">›</button>
-            </div>
-            <div class="cal-dow" id="calDow"></div>
-            <div class="cal-grid" id="calGrid"></div>
-            <div class="cal-legend">
-              <span><i class="i-range"></i>выбранные даты</span>
-              <span><i class="i-booked"></i>уже занято</span>
-            </div>
-            <div class="cal-summary" id="calSummary">выбери дату начала</div>
-          </div>
+          <input type="hidden" name="route" value="Балымеры · 3 дня / 2 ночи">
         </div>
 
-        <div class="field-note">путешественники: 2 человека</div>
+        <div class="field-note">маршрут: Балымеры · путешественники: 2 человека</div>
         <input type="hidden" name="pax" value="2 человека">
 
         <button type="submit" class="btn btn-primary">отправить заявку →</button>
@@ -758,6 +778,34 @@
   </div>
 </div>
 
+<!-- МОДАЛЬНОЕ ОКНО — детально про автомобиль, по клику "Вид ›" -->
+<div class="modal-overlay" id="vehicleModal" onclick="if(event.target===this) closeVehicle()">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3>Suzuki Jimny</h3>
+        <div class="modal-tagline">палатка на крыше · снаряжён для автономного лагеря</div>
+      </div>
+      <button class="modal-close" onclick="closeVehicle()">×</button>
+    </div>
+    <div style="padding: 28px; background:#fff;">
+      <img src="photos/hero-1-110.jpg" alt="Suzuki Jimny" style="width:100%; border:1px solid var(--line);">
+    </div>
+    <div class="modal-facts" style="border-top:none;">
+      <ul>
+        <li>Мест в машине: 2–4</li>
+        <li>Привод: полный 4×4</li>
+        <li>Топливо: бензин, с запасом на весь маршрут</li>
+        <li>Коробка: механика</li>
+        <li>Резина: по сезону</li>
+        <li>Связь: рация в комплекте</li>
+        <li>Аптечка: полная, в машине</li>
+        <li>Сопровождение: проводник рядом весь маршрут</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
 <footer>
   <div class="wrap footer-inner">
     <span>© 2026 вне шума · Казань · vneshuma.ru</span>
@@ -818,10 +866,15 @@
 
     // Маршруты идут фиксированным числом дней ("2 дня", "7 дней" и т.п.) —
     // если маршрут выбран, дата окончания достраивается сама по клику на старт.
+    // routeSelect может быть и <select>, и скрытым <input value="..."> (v2, один маршрут) —
+    // читаем длительность из строки value в обоих случаях.
     const routeSelect = document.getElementById('route');
     function routeDuration() {
-      const opt = routeSelect && routeSelect.options[routeSelect.selectedIndex];
-      const m = opt && opt.text.match(/(\d+)\s*(день|дня|дней)/);
+      if (!routeSelect) return null;
+      const text = routeSelect.tagName === 'SELECT'
+        ? (routeSelect.options[routeSelect.selectedIndex] && routeSelect.options[routeSelect.selectedIndex].text)
+        : routeSelect.value;
+      const m = text && text.match(/(\d+)\s*(день|дня|дней)/);
       return m ? parseInt(m[1], 10) : null;
     }
 
@@ -1246,7 +1299,17 @@
     document.body.style.overflow = '';
     if (currentMap) { currentMap.remove(); currentMap = null; }
   }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRoute(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeRoute(); closeVehicle(); } });
+
+  // Модалка "Вид ›" для карточки автомобиля
+  function openVehicle() {
+    document.getElementById('vehicleModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeVehicle() {
+    document.getElementById('vehicleModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
 </script>
 
 </body>
