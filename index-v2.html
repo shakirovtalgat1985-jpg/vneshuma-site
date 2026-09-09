@@ -145,6 +145,17 @@
   @media (max-width: 640px) { .announce-inner { padding: 10px 20px; font-size: 11px; gap: 10px; } }
   .announce a { text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.5); white-space: nowrap; flex-shrink: 0; }
 
+  /* SITE NAV — настоящее меню под полосой-анонсом, как у референса */
+  .sitenav { position: sticky; top: 33px; z-index: 59; background: var(--bg); border-bottom: 1px solid var(--line); }
+  @media (max-width: 640px) { .sitenav { top: 31px; } }
+  .sitenav-inner { max-width: 1100px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  @media (max-width: 640px) { .sitenav-inner { padding: 14px 20px; } }
+  .sitenav-brand { font-weight: 600; letter-spacing: 3px; text-decoration: none; text-transform: uppercase; font-size: 14px; }
+  .sitenav-links { display: flex; gap: 26px; list-style: none; }
+  .sitenav-links a { text-decoration: none; font-size: 13px; letter-spacing: 0.5px; color: var(--ink-soft); }
+  .sitenav-links a:hover { color: var(--ink); }
+  @media (max-width: 860px) { .sitenav-links { display: none; } }
+
   /* TAGLINE CTA STRIP — короткий эмоциональный разрыв посреди страницы */
   .tagline-strip { padding: 80px 0; text-align: center; background: var(--ink); color: #fff; }
   .tagline-strip .tagline { font-size: clamp(18px, 2.6vw, 26px); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px; }
@@ -386,6 +397,21 @@
     <a href="#booking">БРОНИРОВАТЬ ›</a>
   </div>
 </div>
+
+<!-- НАВИГАЦИЯ — настоящее меню по разделам, как у референса -->
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="#" class="sitenav-brand">вне шума</a>
+    <ul class="sitenav-links">
+      <li><a href="#base">о нас</a></li>
+      <li><a href="#process">как это работает</a></li>
+      <li><a href="#vehicle">автомобиль</a></li>
+      <li><a href="#routes">маршрут</a></li>
+      <li><a href="#faq">faq</a></li>
+      <li><a href="#booking">бронирование</a></li>
+    </ul>
+  </div>
+</nav>
 
 <!-- HERO: полноэкранное слайд-шоу, без подписей -->
 <div class="hero-slideshow" id="heroSlides">
