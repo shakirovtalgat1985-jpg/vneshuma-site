@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48 64x64 128x128 256x256">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>вне шума · путешествия на подготовленном внедорожнике</title>
+<meta name="description" content="Снаряжённый Suzuki Jimny с готовым маршрутом. Казань · Марий Эл · Татарстан · Башкирия.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+<style>
+  :root {
+    --bg: #FDFAF2;
+    --ink: #0A0A0A;
+    --ink-soft: #5A5A5A;
+    --line: #DADADA;
+    --line-strong: #0A0A0A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'IBM Plex Mono', monospace; font-size: 16px; line-height: 1.6;
+    overflow-x: hidden;
+  }
+  h1, h2, h3 { font-family: 'IBM Plex Mono', monospace; font-weight: 600; line-height: 1.15; }
+  img { display: block; max-width: 100%; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 640px) { .wrap { padding: 0 20px; } }
+  a { color: inherit; }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+
+  /* NAV */
+  .brand { font-weight: 600; letter-spacing: 3px; text-decoration: none; color: #fff; text-transform: uppercase; }
+  .hero-brand { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: clamp(28px, 5vw, 48px); letter-spacing: 8px; margin-right: -8px; text-align: center; z-index: 2; }
+  .nav-cta { font-size: 13px; letter-spacing: 1px; text-decoration: none; color: #fff; }
+
+  /* HERO SLIDESHOW */
+  .hero-slideshow { position: relative; width: 100%; height: 100svh; overflow: hidden; background: #0A0A0A; }
+  .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.6s ease; }
+  .hero-slide.active { opacity: 1; }
+  .hero-slide img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.75) contrast(1.05); }
+  .hero-slide::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.4) 100%); }
+  .hero-booking-link { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 13px; letter-spacing: 1px; text-decoration: none; z-index: 2; text-transform: uppercase; }
+  .hero-dots { position: absolute; bottom: 28px; right: 32px; display: flex; gap: 8px; z-index: 2; }
+  @media (max-width: 640px) { .hero-dots { right: 20px; } }
+  .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); cursor: pointer; transition: background 0.2s; }
+  .hero-dot.active { background: #fff; }
+
+  /* PHOTO STRIP — бегущая лента, сразу под хиро; автопрокрутка + свайп/перетаскивание */
+  .photo-strip { width: 100%; overflow-x: auto; overflow-y: hidden; background: #0A0A0A; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; will-change: scroll-position; margin-top: -1px; position: relative; }
+  .photo-strip::-webkit-scrollbar { display: none; }
+  .photo-strip-track { display: flex; width: max-content; cursor: grab; user-select: none; }
+  .photo-strip-track.dragging { cursor: grabbing; }
+  .photo-strip-track img { height: 260px; width: auto; object-fit: cover; flex-shrink: 0; margin-right: 2px; filter: saturate(0.85) contrast(1.05); pointer-events: none; }
+  @media (max-width: 640px) { .photo-strip-track img { height: 160px; } }
+
+  /* INTRO / PHILOSOPHY */
+  .intro { padding: 110px 0 90px; text-align: center; }
+  .intro-eyebrow { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 28px; }
+  .intro p { font-size: clamp(20px, 2.6vw, 27px); max-width: 700px; margin: 0 auto; line-height: 1.55; }
+  .intro-actions { margin-top: 44px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 15px 30px; border-radius: 2px; text-decoration: none; font-size: 14px; letter-spacing: 0.5px; font-weight: 500; transition: all 0.15s; border: 1px solid var(--ink); }
+  .btn-primary { background: var(--ink); color: var(--bg); }
+  .btn-primary:hover { background: #333; }
+  .btn-outline { background: transparent; }
+  .btn-outline:hover { background: var(--ink); color: var(--bg); }
+
+  /* FULL-BLEED BREAK PHOTO */
+  .break-photo { width: 100%; height: 62vh; overflow: hidden; position: relative; }
+  .break-photo img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.75) contrast(1.05); }
+  .break-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.4) 100%); }
+
+  /* SECTION HEAD */
+  .section-head { padding: 90px 0 44px; text-align: center; }
+  .section-head .eyebrow { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 14px; }
+  .section-head h2 { font-size: clamp(28px, 4vw, 40px); }
+  .section-head p { color: var(--ink-soft); margin-top: 14px; max-width: 520px; margin-left: auto; margin-right: auto; }
+
+  /* PASSPORT ROUTES — photo tiles, no cards/borders */
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  @media (max-width: 860px) { .tiles { grid-template-columns: 1fr; } }
+  .tile { position: relative; aspect-ratio: 3/4; overflow: hidden; text-decoration: none; display: block; cursor: pointer; }
+  .tile img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; filter: saturate(0.75) contrast(1.05); }
+  .tile:hover img { transform: scale(1.04); }
+  .tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0.22) 100%); }
+  .tile-body { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px; color: #fff; z-index: 1; }
+  .tile-level { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.85; margin-bottom: 8px; display: block; }
+  .tile-body h3 { font-size: 24px; margin-bottom: 6px; }
+  .tile-body p { font-size: 13px; opacity: 0.9; max-width: 320px; }
+  .tile-dist { position: absolute; top: 26px; right: 26px; z-index: 1; color: #fff; font-size: 13px; letter-spacing: 1px; }
+
+  /* PASSPORT LEVELS — plain numbered list, no cards */
+  .levels-list { max-width: 640px; margin: 0 auto; }
+  .level-item { display: grid; grid-template-columns: 90px 1fr; gap: 24px; padding: 26px 0; border-top: 1px solid var(--line); align-items: baseline; }
+  .levels-list .level-item:last-child { border-bottom: 1px solid var(--line); }
+  .level-num { font-size: 13px; color: var(--ink-soft); letter-spacing: 1px; }
+  .level-item h3 { font-size: 19px; margin-bottom: 6px; }
+  .level-item p { font-size: 14px; color: var(--ink-soft); }
+  @media (max-width: 560px) { .level-item { grid-template-columns: 1fr; gap: 4px; } }
+
+  /* PASSPORT CTA STRIP — карточка + весь текст в один компактный ряд */
+  .passport-strip { padding: 70px 0 44px; border-bottom: 1px solid var(--line); }
+  .passport-strip-inner { display: flex; align-items: center; gap: 48px; flex-wrap: wrap; }
+  .passport-strip-text { flex: 1; min-width: 280px; }
+  .passport-strip-text .eyebrow { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 14px; }
+  .passport-strip-text h2 { font-size: clamp(22px, 2.6vw, 30px); margin-bottom: 10px; }
+  .passport-strip-text p { color: var(--ink-soft); max-width: 480px; font-size: 15px; margin-bottom: 22px; }
+  .passport-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .levels-more:not([hidden]) { padding: 36px 0 8px; }
+
+  /* PASSPORT VISUAL MOCKUP */
+  .passport-mock { flex-shrink: 0; width: 220px; aspect-ratio: 3/4.2; background: var(--ink); color: #fff; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+  .passport-mock::after { content: ''; position: absolute; inset: 6px; border: 1px solid rgba(255,255,255,0.3); pointer-events: none; }
+  .passport-mock-top { display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 1px; }
+  .passport-mock-emblem { font-size: 16px; }
+  .passport-mock-title { font-size: 22px; font-weight: 600; line-height: 1.2; margin: 10px 0; }
+  .passport-mock-stamps { display: flex; gap: 8px; }
+  .passport-mock-stamp { width: 34px; height: 34px; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; letter-spacing: 1px; color: rgba(255,255,255,0.5); }
+  .passport-mock-stamp.done { border-color: #fff; color: #fff; transform: rotate(-8deg); }
+  .passport-mock-code { font-size: 11px; letter-spacing: 1px; color: rgba(255,255,255,0.6); }
+
+  /* PROCESS — как проходит поездка, 4 шага */
+  .process { padding: 90px 0 100px; }
+  .process-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-top: 8px; }
+  @media (max-width: 860px) { .process-list { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .process-list { grid-template-columns: 1fr; } }
+  .process-item { padding-top: 20px; border-top: 1px solid var(--line-strong); }
+  .process-num { font-size: 13px; color: var(--ink-soft); letter-spacing: 1px; margin-bottom: 14px; }
+  .process-item h3 { font-size: 17px; margin-bottom: 8px; }
+  .process-item p { font-size: 14px; color: var(--ink-soft); }
+
+  /* TOP ANNOUNCEMENT + NAV — липкая полоса сверху, как у референса */
+  .announce { position: sticky; top: 0; z-index: 60; background: var(--ink); color: #fff; }
+  .announce-inner { max-width: 1100px; margin: 0 auto; padding: 10px 32px; display: flex; align-items: center; justify-content: center; gap: 16px; font-size: 12px; letter-spacing: 1px; text-align: center; }
+  @media (max-width: 640px) { .announce-inner { padding: 10px 20px; font-size: 11px; gap: 10px; } }
+  .announce a { text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.5); white-space: nowrap; flex-shrink: 0; }
+
+  /* TAGLINE CTA STRIP — короткий эмоциональный разрыв посреди страницы */
+  .tagline-strip { padding: 80px 0; text-align: center; background: var(--ink); color: #fff; }
+  .tagline-strip .tagline { font-size: clamp(18px, 2.6vw, 26px); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px; }
+  .tagline-strip .tagline span { opacity: 0.35; margin: 0 10px; }
+  .tagline-strip .btn-on-dark { border-color: #fff; background: #fff; color: var(--ink); }
+  .tagline-strip .btn-on-dark:hover { background: transparent; color: #fff; }
+
+  /* BASE / LOCATION — своя база, расстояния до ориентиров */
+  .base { padding: 100px 0; }
+  .base-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  @media (max-width: 860px) { .base-grid { grid-template-columns: 1fr; gap: 40px; } }
+  .base-text p { color: var(--ink-soft); font-size: 15px; max-width: 440px; margin-top: 14px; }
+  .base-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; margin-top: 36px; background: var(--line); }
+  .base-stat { background: var(--bg); padding: 20px; }
+  .base-stat strong { display: block; font-size: 26px; margin-bottom: 4px; }
+  .base-stat span { font-size: 12px; color: var(--ink-soft); letter-spacing: 0.5px; }
+  .base-distances { border-top: 1px solid var(--line); }
+  .base-dist-row { display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .base-dist-row span:first-child { color: var(--ink-soft); }
+  .base-dist-row strong { font-weight: 600; }
+
+  /* STANDARD — философия качества подготовки */
+  .standard { padding: 0 0 100px; text-align: center; }
+  .standard h2 { font-size: clamp(24px, 3.4vw, 34px); max-width: 640px; margin: 0 auto 20px; }
+  .standard p { color: var(--ink-soft); max-width: 560px; margin: 0 auto; font-size: 15px; }
+  .standard .standard-note { margin-top: 26px; font-style: italic; font-size: 15px; color: var(--ink); }
+
+  /* VEHICLE SPEC CARD — единственный авто, полные технические детали */
+  .vehicle { padding: 100px 0; border-top: 1px solid var(--line); }
+  .vehicle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+  @media (max-width: 860px) { .vehicle-grid { grid-template-columns: 1fr; gap: 36px; } }
+  .vehicle-photo { aspect-ratio: 4/3; overflow: hidden; }
+  .vehicle-photo img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85) contrast(1.05); }
+  .vehicle-name { font-size: clamp(24px, 3vw, 32px); margin-bottom: 6px; }
+  .vehicle-tag { color: var(--ink-soft); font-size: 14px; margin-bottom: 28px; }
+  .vehicle-specs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; border-top: 1px solid var(--line); }
+  .vehicle-spec { padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .vehicle-spec:nth-child(odd) { padding-right: 16px; border-right: 1px solid var(--line); }
+  .vehicle-spec span { display: block; font-size: 12px; color: var(--ink-soft); letter-spacing: 0.5px; margin-bottom: 4px; }
+  .vehicle-spec strong { font-size: 14px; }
+
+  /* INCLUDED — что входит, без доплат */
+  .included { padding: 100px 0; text-align: center; border-top: 1px solid var(--line); }
+  .included-list { max-width: 640px; margin: 44px auto 0; text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--line); }
+  @media (max-width: 560px) { .included-list { grid-template-columns: 1fr; } }
+  .included-item { background: var(--bg); padding: 18px 22px; font-size: 14px; display: flex; align-items: baseline; gap: 10px; }
+  .included-item::before { content: '✓'; color: var(--ink-soft); flex-shrink: 0; }
+  .included-note { margin-top: 34px; font-size: 14px; color: var(--ink-soft); max-width: 480px; margin-left: auto; margin-right: auto; }
+
+  /* UPSELLS — доп. снаряжение за отдельную плату */
+  .upsells { padding: 100px 0; border-top: 1px solid var(--line); }
+  .upsell-list { max-width: 640px; margin: 0 auto; }
+  .upsell-row { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: baseline; padding: 22px 0; border-top: 1px solid var(--line); }
+  .upsell-list .upsell-row:last-child { border-bottom: 1px solid var(--line); }
+  .upsell-row h4 { font-size: 16px; margin-bottom: 4px; }
+  .upsell-row p { font-size: 13px; color: var(--ink-soft); }
+  .upsell-price { font-size: 15px; white-space: nowrap; }
+
+  /* FAQ — раскрывающиеся вопросы */
+  .faq { padding: 100px 0; border-top: 1px solid var(--line); }
+  .faq-list { max-width: 700px; margin: 0 auto; }
+  .faq-item { border-top: 1px solid var(--line); }
+  .faq-list .faq-item:last-child { border-bottom: 1px solid var(--line); }
+  .faq-q { width: 100%; text-align: left; background: none; border: none; font-family: inherit; font-size: 16px; padding: 22px 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 20px; color: var(--ink); }
+  .faq-q-mark { font-size: 18px; color: var(--ink-soft); flex-shrink: 0; transition: transform 0.2s; }
+  .faq-item.open .faq-q-mark { transform: rotate(45deg); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+  .faq-item.open .faq-a { max-height: 400px; }
+  .faq-a p { padding: 0 0 24px; font-size: 14px; color: var(--ink-soft); max-width: 560px; }
+
+  /* FINAL CTA — закрывающий блок перед футером */
+  .final-cta { padding: 120px 0; text-align: center; background: var(--ink); color: #fff; }
+  .final-cta h2 { font-size: clamp(26px, 3.6vw, 38px); margin-bottom: 16px; max-width: 600px; margin-left: auto; margin-right: auto; }
+  .final-cta p { color: rgba(255,255,255,0.65); margin-bottom: 36px; font-size: 15px; }
+
+  /* GUIDE — кто ведёт группу, доверие к человеку */
+  .guide { padding: 0 0 100px; }
+  .guide-card { display: flex; align-items: center; gap: 40px; background: var(--ink); color: #fff; padding: 40px; flex-wrap: wrap; }
+  .guide-photo { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: rgba(255,255,255,0.1); }
+  .guide-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .guide-text h3 { font-size: 22px; margin-bottom: 4px; }
+  .guide-role { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.6; margin-bottom: 14px; }
+  .guide-text p { font-size: 15px; opacity: 0.85; max-width: 520px; margin-bottom: 16px; }
+  .guide-links a { text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.4); font-size: 14px; }
+  @media (max-width: 560px) { .guide-card { padding: 32px 24px; gap: 24px; } .guide-photo { width: 88px; height: 88px; } }
+
+  /* CATALOG — plain list, no cards */
+  .catalog { padding: 40px 0 20px; }
+  .cat-row { display: grid; grid-template-columns: 110px 1fr auto; gap: 24px; align-items: baseline; padding: 26px 0; border-top: 1px solid var(--line); }
+  .catalog .cat-row:last-child { border-bottom: 1px solid var(--line); }
+  @media (max-width: 700px) { .cat-row { grid-template-columns: 1fr; gap: 6px; } }
+  .cat-days { font-size: 13px; color: var(--ink-soft); letter-spacing: 1px; }
+  .cat-mid h4 { font-size: 18px; margin-bottom: 4px; }
+  .cat-mid p { font-size: 14px; color: var(--ink-soft); max-width: 560px; }
+  .cat-price { font-size: 15px; white-space: nowrap; }
+  @media (max-width: 700px) { .cat-price { margin-top: 6px; } }
+
+  /* BOOKING */
+  .booking { padding: 100px 0; border-top: 1px solid var(--line); }
+  .booking-inner { max-width: 640px; margin: 0 auto; }
+  .booking h2 { font-size: 34px; margin-bottom: 12px; text-align: center; }
+  .booking-sub { color: var(--ink-soft); margin-bottom: 48px; text-align: center; }
+
+  .field-group { margin-bottom: 40px; }
+  .field-group-title { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 20px; }
+  label { display: block; font-size: 13px; color: var(--ink-soft); margin-bottom: 6px; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 560px) { .row-2 { grid-template-columns: 1fr; } }
+  .field { margin-bottom: 20px; }
+  .field-note { font-size: 13px; color: var(--ink-soft); margin-bottom: 28px; }
+  input, select, textarea {
+    width: 100%; padding: 13px 0; border: none; border-bottom: 1px solid var(--line); background: transparent;
+    font-family: inherit; font-size: 15px; color: var(--ink); border-radius: 0;
+  }
+  textarea { min-height: 80px; resize: vertical; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--ink); }
+
+  .chk-list { display: flex; flex-direction: column; gap: 2px; }
+  .chk { display: flex; align-items: baseline; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 14px; cursor: pointer; }
+  .chk-list .chk:last-child { border-bottom: 1px solid var(--line); }
+  .chk input { width: auto; flex-shrink: 0; accent-color: var(--ink); }
+  .chk span.lbl { flex: 1; }
+  .chk span.price { color: var(--ink-soft); font-size: 13px; white-space: nowrap; }
+
+  .radio-row { display: flex; gap: 24px; flex-wrap: wrap; }
+  .radio { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+  .radio input { width: auto; accent-color: var(--ink); }
+
+  .total-strip { display: flex; justify-content: space-between; align-items: baseline; padding: 24px 0; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); margin: 40px 0; }
+  .total-lbl { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-soft); }
+  .total-val { font-size: 28px; }
+  .total-note { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+
+  .booking-status { margin-top: 16px; font-size: 14px; }
+
+  /* CALENDAR POPUP — один клик "от", один "до" */
+  .cal-field { position: relative; }
+  .cal-field input#datesDisplay { cursor: pointer; }
+  .cal-pop {
+    display: none; position: absolute; top: calc(100% + 8px); left: 0; z-index: 20;
+    width: 300px; max-width: 90vw; background: var(--bg); border: 1px solid var(--line-strong);
+    padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+  .cal-pop.open { display: block; }
+  .cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .cal-nav-btn { background: none; border: 1px solid var(--line); width: 28px; height: 28px; cursor: pointer; font-size: 15px; color: var(--ink); }
+  .cal-nav-btn:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .cal-title { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
+  .cal-dow, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal-dow { margin-bottom: 4px; }
+  .cal-dow span { font-size: 10px; text-align: center; color: var(--ink-soft); letter-spacing: 0.5px; }
+  .cal-cell {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; cursor: pointer; border: 1px solid transparent; user-select: none;
+  }
+  .cal-cell.pad { cursor: default; }
+  .cal-cell.past { color: var(--line); cursor: not-allowed; }
+  .cal-cell.avail:hover { border-color: var(--ink); }
+  .cal-cell.sel { background: var(--ink); color: var(--bg); }
+  .cal-cell.range { background: var(--line); }
+  .cal-cell.booked { background: var(--ink-soft); color: var(--bg); cursor: not-allowed; opacity: 0.55; }
+  .cal-legend { display: flex; gap: 16px; margin-top: 10px; font-size: 11px; color: var(--ink-soft); }
+  .cal-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .cal-legend i { width: 10px; height: 10px; display: inline-block; border: 1px solid var(--line); }
+  .cal-legend i.i-range { background: var(--line); }
+  .cal-legend i.i-booked { background: var(--ink-soft); }
+  .cal-summary { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-soft); text-align: center; }
+  .cal-summary strong { color: var(--ink); }
+
+  /* ACADEMY TEASER */
+  .academy-teaser { padding: 100px 0; text-align: center; border-top: 1px solid var(--line); }
+  .academy-teaser .eyebrow { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 14px; }
+  .academy-teaser h2 { font-size: clamp(26px, 3.6vw, 36px); margin-bottom: 18px; text-transform: lowercase; }
+  .academy-teaser p { color: var(--ink-soft); max-width: 480px; margin: 0 auto 32px; }
+
+  /* PASSPORT COMPACT — тихий бонус внизу, рядом с академией, не отвлекает от покупки */
+  .passport-compact { padding: 0 0 100px; text-align: center; border-top: 1px solid var(--line); padding-top: 70px; }
+  .passport-compact .eyebrow { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 10px; }
+  .passport-compact h3 { font-size: 18px; font-weight: 600; margin-bottom: 10px; color: var(--ink-soft); }
+  .passport-compact p { font-size: 14px; color: var(--ink-soft); max-width: 460px; margin: 0 auto 20px; }
+  .passport-toggle { background: none; border: none; font-family: inherit; font-size: 13px; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 0; }
+  .passport-toggle:hover { color: var(--ink); }
+  .passport-compact .levels-list { margin-top: 36px; text-align: left; }
+
+  /* FOOTER */
+  footer { padding: 48px 0; border-top: 1px solid var(--line); }
+  .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; font-size: 14px; color: var(--ink-soft); }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a { text-decoration: none; border-bottom: 1px solid var(--line); }
+
+  /* FLOATING CONTACT WIDGET — плавающая кнопка связи, всегда на виду */
+  .float-contact { position: fixed; bottom: 24px; right: 24px; z-index: 50; display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .float-contact-label { background: var(--ink); color: #fff; font-size: 13px; letter-spacing: 0.5px; padding: 10px 16px; border-radius: 20px; white-space: nowrap; opacity: 0; transform: translateX(8px); transition: opacity 0.2s, transform 0.2s; pointer-events: none; }
+  .float-contact:hover .float-contact-label { opacity: 1; transform: translateX(0); }
+  .float-contact-icon { width: 54px; height: 54px; border-radius: 50%; background: var(--ink); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.25); transition: transform 0.2s; }
+  .float-contact:hover .float-contact-icon { transform: scale(1.06); }
+  .float-contact-icon svg { width: 24px; height: 24px; }
+  @media (max-width: 640px) { .float-contact { bottom: 16px; right: 16px; } .float-contact-label { display: none; } .float-contact-icon { width: 48px; height: 48px; } }
+
+  /* MODAL — детализация маршрута */
+  .tile, .cat-row { cursor: pointer; }
+  .modal-overlay { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(10,10,10,0.85); padding: 24px; overflow-y: auto; }
+  .modal-overlay.open { display: block; }
+  .modal { max-width: 780px; margin: 40px auto; background: var(--bg); border: 1px solid var(--line-strong); }
+  .modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; padding: 28px 28px 20px; border-bottom: 1px solid var(--line); }
+  .modal-head h3 { font-size: 24px; margin-bottom: 6px; }
+  .modal-tagline { color: var(--ink-soft); font-size: 14px; }
+  .modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--ink); line-height: 1; padding: 4px; }
+  .modal-meta { display: flex; gap: 28px; padding: 18px 28px; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .modal-meta div strong { display: block; font-size: 16px; }
+  .modal-map { width: 100%; height: 320px; }
+  .modal-points { padding: 8px 28px 28px; }
+  .modal-point { padding: 16px 0; border-top: 1px solid var(--line); }
+  .modal-point-head { display: flex; gap: 10px; align-items: baseline; margin-bottom: 6px; }
+  .modal-point-num { font-size: 12px; color: var(--ink-soft); mono: 1; }
+  .modal-point-name { font-weight: 600; }
+  .modal-point-info { font-size: 14px; color: var(--ink-soft); margin-bottom: 4px; }
+  .modal-point-tip { font-size: 13px; color: var(--ink-soft); font-style: italic; }
+  .modal-note { padding: 20px 28px; font-size: 14px; color: var(--ink-soft); }
+  .modal-schedule { padding: 8px 28px 8px; }
+  .schedule-day-title { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-soft); margin: 28px 0 4px; }
+  .schedule-day-title:first-child { margin-top: 8px; }
+  .schedule-item { display: grid; grid-template-columns: 60px 1fr; gap: 14px; padding: 14px 0; border-top: 1px solid var(--line); }
+  .schedule-time { font-size: 13px; color: var(--ink-soft); }
+  .schedule-title { font-weight: 600; margin-bottom: 4px; }
+  .schedule-tip { font-size: 13px; color: var(--ink-soft); font-style: italic; }
+  @media (max-width: 480px) { .schedule-item { grid-template-columns: 44px 1fr; gap: 10px; } }
+  .modal-facts { padding: 8px 28px 28px; border-top: 1px solid var(--line); margin-top: 12px; }
+  .modal-facts ul { padding: 16px 0 0 18px; }
+  .modal-facts li { font-size: 13px; color: var(--ink-soft); margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<!-- ВЕРХНЯЯ ПОЛОСА — липкое напоминание, всегда на виду -->
+<div class="announce">
+  <div class="announce-inner">
+    <span>ВЫЕЗД ИЗ КАЗАНИ · МАРШРУТ «БАЛЫМЕРЫ» · 3 ДНЯ / 2 НОЧИ</span>
+    <a href="#booking">БРОНИРОВАТЬ ›</a>
+  </div>
+</div>
+
+<!-- HERO: полноэкранное слайд-шоу, без подписей -->
+<div class="hero-slideshow" id="heroSlides">
+  <div class="hero-slide active"><img src="photos/hero-2-10.jpg" alt=""></div>
+  <a href="#" class="brand hero-brand">вне шума</a>
+  <a href="#booking" class="hero-booking-link">бронирование</a>
+  <div class="hero-dots" id="heroDots"></div>
+</div>
+
+<!-- БЕГУЩАЯ ЛЕНТА — бесконечная прокрутка фото, сразу под хиро -->
+<div class="photo-strip">
+  <div class="photo-strip-track" id="photoStripTrack">
+    <img src="photos/strip/strip-1.jpg" alt="">
+    <img src="photos/strip/strip-3.jpg" alt="">
+    <img src="photos/strip/strip-4.jpg" alt="">
+    <img src="photos/strip/strip-5.jpg" alt="">
+    <img src="photos/strip/strip-6.jpg" alt="">
+    <img src="photos/strip/strip-7.jpg" alt="">
+    <img src="photos/strip/strip-8.jpg" alt="">
+    <img src="photos/strip/strip-9.jpg" alt="">
+  </div>
+</div>
+
+<main>
+
+  <!-- INTRO / ФИЛОСОФИЯ — сжато, по сути, без длинных абзацев -->
+  <section class="intro wrap">
+    <div class="intro-eyebrow">suzuki jimny · палатка на крыше · готовый маршрут</div>
+    <p>Мы не делаем туристические маршруты — мы отдаём готовое приключение. Снаряжённый Jimny довозит до места, а дальше ты идёшь сам: к воде, в лес, в тишину. Свобода без расписания, всё продумано заранее — и ноль стресса подготовки.</p>
+    <div class="intro-actions">
+      <a href="#routes" class="btn btn-primary">смотреть маршруты</a>
+      <a href="#passport" class="btn btn-outline">паспорт сложности</a>
+    </div>
+  </section>
+
+  <!-- ЭМОЦИОНАЛЬНЫЙ РАЗРЫВ — короткая яркая строка посреди страницы -->
+  <section class="tagline-strip">
+    <div class="tagline mono">ОГОНЬ<span>·</span>ТИШИНА<span>·</span>НАВСТРЕЧУ СЕБЕ</div>
+    <a href="#booking" class="btn btn-on-dark">бронировать</a>
+  </section>
+
+  <!-- НАША БАЗА — единственная точка старта, Казань -->
+  <section class="base wrap" id="base">
+    <div class="base-grid">
+      <div class="base-text">
+        <div class="intro-eyebrow" style="text-align:left; margin-bottom:14px;">наша база</div>
+        <h2 style="font-size: clamp(24px, 3.4vw, 34px);">Старт всегда из Казани.</h2>
+        <p>Встречаемся в городе, загружаем снаряжение и выезжаем вместе на подготовленном Jimny. Никаких перелётов между базами — один понятный старт, один маршрут, полная концентрация на нём.</p>
+        <div class="base-stats">
+          <div class="base-stat"><strong>1</strong><span>ЕДИНАЯ БАЗА · КАЗАНЬ</span></div>
+          <div class="base-stat"><strong>~100</strong><span>КМ ДО ЛАГЕРЯ</span></div>
+          <div class="base-stat"><strong>3/2</strong><span>ДНЯ / НОЧИ В ПУТИ</span></div>
+          <div class="base-stat"><strong>09:00</strong><span>ВРЕМЯ СТАРТА</span></div>
+        </div>
+      </div>
+      <div class="base-distances">
+        <div class="base-dist-row"><span>от центра Казани</span><strong>15 мин</strong></div>
+        <div class="base-dist-row"><span>от ж/д вокзала Казань-1</span><strong>20 мин</strong></div>
+        <div class="base-dist-row"><span>от аэропорта Казани</span><strong>35 мин</strong></div>
+        <div class="base-dist-row"><span>до места лагеря «Балымеры»</span><strong>~2 часа в пути</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ФИЛОСОФИЯ ПОДГОТОВКИ — не просто снаряжение, а продуманный стандарт -->
+  <section class="standard wrap">
+    <div class="intro-eyebrow">высокий стандарт</div>
+    <h2>Не просто снаряжение. Продумано.</h2>
+    <p>Большинство прокатов просто собирают набор вещей в багажник. У нас каждый Jimny индивидуально готовится перед выездом: полный привод, зимняя резина по сезону, аптечка, рация, топливо с запасом — и человек, который лично проверяет маршрут перед тем, как повезти вас туда.</p>
+    <p class="standard-note">«Никаких доплат в последний момент. Всё нужное уже включено с самого начала.»</p>
+  </section>
+
+  <!-- ЕДИНСТВЕННЫЙ АВТОМОБИЛЬ — карточка с полными техническими деталями -->
+  <section class="vehicle wrap" id="vehicle">
+    <div class="vehicle-grid">
+      <div class="vehicle-photo"><img src="photos/hero-1-110.jpg" alt="Suzuki Jimny"></div>
+      <div>
+        <h2 class="vehicle-name">Suzuki Jimny</h2>
+        <div class="vehicle-tag">палатка на крыше · снаряжён для автономного лагеря</div>
+        <div class="vehicle-specs">
+          <div class="vehicle-spec"><span>мест в машине</span><strong>2–4</strong></div>
+          <div class="vehicle-spec"><span>привод</span><strong>полный 4×4</strong></div>
+          <div class="vehicle-spec"><span>топливо</span><strong>бензин, с запасом</strong></div>
+          <div class="vehicle-spec"><span>коробка</span><strong>механика</strong></div>
+          <div class="vehicle-spec"><span>резина</span><strong>по сезону</strong></div>
+          <div class="vehicle-spec"><span>связь</span><strong>рация в комплекте</strong></div>
+          <div class="vehicle-spec"><span>аптечка</span><strong>полная, в машине</strong></div>
+          <div class="vehicle-spec"><span>сопровождение</span><strong>проводник рядом</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- КАК ПРОХОДИТ ПОЕЗДКА — снимает тревогу "что будет после клика на бронирование" -->
+  <section class="process wrap" id="process">
+    <div class="section-head">
+      <div class="eyebrow">как проходит поездка</div>
+      <h2>четыре шага до костра</h2>
+    </div>
+    <div class="process-list">
+      <div class="process-item">
+        <div class="process-num mono">01</div>
+        <div><h3>Бронируете</h3><p>Выбираете даты в календаре, оставляете телефон — мы на связи в течение 15 минут.</p></div>
+      </div>
+      <div class="process-item">
+        <div class="process-num mono">02</div>
+        <div><h3>Инструктаж</h3><p>За пару дней до выезда созваниваемся: что взять с собой, что не взять, разбираем маршрут.</p></div>
+      </div>
+      <div class="process-item">
+        <div class="process-num mono">03</div>
+        <div><h3>Встреча в Казани</h3><p>09:00, загружаемся, выезжаем на подготовленном Jimny.</p></div>
+      </div>
+      <div class="process-item">
+        <div class="process-num mono">04</div>
+        <div><h3>Маршрут с проводником</h3><p>Три дня рядом с вами: покажем, научим, подстрахуем. Вы не одни ни разу.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="break-photo"><img src="photos/break-1044.jpg" alt=""></div>
+
+  <!-- ВЕСЬ КАТАЛОГ — полный список маршрутов, прямое бронирование -->
+  <section id="routes">
+    <div class="section-head wrap">
+      <div class="eyebrow">маршрут</div>
+      <h2>Балымеры</h2>
+      <p>Дубовый лес на высокой террасе над Волгой, рядом древние курганы Волжской Булгарии. Свой лагерь с нуля, огонь, разведка, автономный быт — три дня по-настоящему в тишине.</p>
+    </div>
+    <div class="wrap">
+      <div class="catalog">
+        <div class="cat-row" onclick="openRoute('balymery')">
+          <div class="cat-days mono">3 дня / 2 ночи</div>
+          <div class="cat-mid"><h4>Балымеры</h4><p>~100 км от Казани. Огонь, навигация, разведка, автономный лагерь. Продвинутый уровень.</p></div>
+          <div class="cat-price mono">30 000 ₽</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЧТО ВКЛЮЧЕНО — без доплат в последний момент -->
+  <section class="included wrap">
+    <div class="intro-eyebrow">что включено</div>
+    <h2 style="font-size: clamp(24px, 3.4vw, 34px); margin-top: 8px;">Полностью укомплектовано. Без доплат.</h2>
+    <div class="included-list">
+      <div class="included-item">Палатка на крыше + спальные места</div>
+      <div class="included-item">Кухня: казан, горелка, посуда</div>
+      <div class="included-item">Топливо и запас на маршрут</div>
+      <div class="included-item">Освещение и организация лагеря</div>
+      <div class="included-item">Стол, стулья, хранение</div>
+      <div class="included-item">Проводник на весь маршрут</div>
+    </div>
+    <p class="included-note">Если хочется добавить что-то к поездке — ниже небольшой список платных дополнений.</p>
+  </section>
+
+  <!-- ПАСПОРТ СЛОЖНОСТИ — реальная прогрессия, 9 уровней; здесь — как бонус "куда расти дальше", не барьер перед покупкой -->
+  <!-- БРОНИРОВАНИЕ -->
+  <section class="booking wrap" id="booking">
+    <div class="booking-inner">
+      <h2>бронирование</h2>
+      <p class="booking-sub">Заполни форму — мы проверим даты и свяжемся в течение 15 минут. Заявка уходит напрямую в Telegram.</p>
+
+      <form id="bookingForm">
+
+        <div class="field"><label>телефон</label><input type="tel" name="phone" placeholder="+7 999 000 00 00" required></div>
+
+        <div class="field">
+          <label>маршрут</label>
+          <select name="route" id="route">
+            <option value="">ещё не выбрал — подскажите</option>
+            <option value="Балымеры · 3 дня / 2 ночи">Балымеры · 3 дня / 2 ночи</option>
+          </select>
+        </div>
+
+        <div class="field cal-field">
+          <label>даты поездки</label>
+          <input type="text" id="datesDisplay" readonly placeholder="выбрать даты" autocomplete="off">
+          <input type="hidden" name="dateStart" id="dateStart" required>
+          <input type="hidden" name="dateEnd" id="dateEnd" required>
+          <div class="cal-pop" id="calPop">
+            <div class="cal-nav">
+              <button type="button" class="cal-nav-btn" id="calPrev">‹</button>
+              <div class="cal-title mono" id="calTitle"></div>
+              <button type="button" class="cal-nav-btn" id="calNext">›</button>
+            </div>
+            <div class="cal-dow" id="calDow"></div>
+            <div class="cal-grid" id="calGrid"></div>
+            <div class="cal-legend">
+              <span><i class="i-range"></i>выбранные даты</span>
+              <span><i class="i-booked"></i>уже занято</span>
+            </div>
+            <div class="cal-summary" id="calSummary">выбери дату начала</div>
+          </div>
+        </div>
+
+        <div class="field-note">путешественники: 2 человека</div>
+        <input type="hidden" name="pax" value="2 человека">
+
+        <button type="submit" class="btn btn-primary">отправить заявку →</button>
+        <div class="booking-status" id="bookingStatus"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ДОПОЛНИТЕЛЬНОЕ СНАРЯЖЕНИЕ — платные допы, образец набора -->
+  <section class="upsells wrap">
+    <div class="section-head" style="padding-top:0;">
+      <div class="eyebrow">дополнительно</div>
+      <h2>Хочешь взять больше?</h2>
+    </div>
+    <div class="upsell-list">
+      <div class="upsell-row">
+        <div><h4>SUP-board</h4><p>Для спокойной воды у лагеря — весло и жилет включены</p></div>
+        <div class="upsell-price mono">+ 2 000 ₽</div>
+      </div>
+      <div class="upsell-row">
+        <div><h4>Дополнительная палатка</h4><p>Если едет больше двух человек или нужно личное пространство</p></div>
+        <div class="upsell-price mono">+ 1 500 ₽</div>
+      </div>
+      <div class="upsell-row">
+        <div><h4>Рация (вторая)</h4><p>Для связи между двумя машинами, если едете компанией</p></div>
+        <div class="upsell-price mono">+ 800 ₽</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ — частые вопросы перед бронированием -->
+  <section class="faq wrap" id="faq">
+    <div class="section-head" style="padding-top:0;">
+      <div class="eyebrow">faq</div>
+      <h2>Частые вопросы</h2>
+    </div>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item">
+        <button type="button" class="faq-q">Нужен ли опыт похода или вождения по бездорожью?<span class="faq-q-mark">+</span></button>
+        <div class="faq-a"><p>Нет. Маршрут рассчитан на новичков — проводник рядом весь маршрут, показывает и объясняет каждый шаг: от розжига костра до постановки лагеря.</p></div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q">Что взять с собой?<span class="faq-q-mark">+</span></button>
+        <div class="faq-a"><p>Личные вещи, одежду по погоде и хорошее настроение. Снаряжение, кухня и топливо — уже в машине. Полный список пришлём при созвоне перед выездом.</p></div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q">Можно ли сдвинуть даты после брони?<span class="faq-q-mark">+</span></button>
+        <div class="faq-a"><p>Да, если сообщить заранее — согласуем свободные даты в календаре.</p></div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q">Сколько человек может поехать?<span class="faq-q-mark">+</span></button>
+        <div class="faq-a"><p>Маршрут «Балымеры» рассчитан на группу 2–4 человека.</p></div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q">Что с погодой и связью на маршруте?<span class="faq-q-mark">+</span></button>
+        <div class="faq-a"><p>Сезон — конец сентября–октябрь, ночи прохладные, нужен тёплый спальник (подскажем при инструктаже). Сотовая связь есть не везде — в машине рация.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- АКАДЕМИЯ — тизер, ссылка на отдельную страницу -->
+  <section class="academy-teaser wrap">
+    <div class="eyebrow">новое</div>
+    <h2>академия вне шума</h2>
+    <p>Больше самостоятельности. Больше доступных территорий. Учимся не выживать в природе, а чувствовать себя в ней уверенно.</p>
+    <a href="/academy" class="btn btn-outline">узнать об академии →</a>
+  </section>
+
+  <!-- ПАСПОРТ СЛОЖНОСТИ — внизу, тихим бонусом, не отвлекает от покупки -->
+  <section class="passport-compact wrap" id="passport">
+    <div class="eyebrow">паспорт сложности · 9 уровней</div>
+    <h3>прогрессия, которая открывается сама</h3>
+    <p>Не все уровни открыты сразу. Каждый пройденный маршрут открывает следующий — на новую территорию, сложнее и дальше от города.</p>
+    <button type="button" class="passport-toggle" id="levelsToggle" onclick="
+      const m = document.getElementById('levelsMore');
+      m.hidden = !m.hidden;
+      this.textContent = m.hidden ? 'показать все 9 уровней ↓' : 'свернуть ↑';
+    ">показать все 9 уровней ↓</button>
+
+    <div class="levels-list">
+      <div class="levels-more" id="levelsMore" hidden>
+        <div class="level-item">
+          <div class="level-num mono">01</div>
+          <div><h3>Первый выезд</h3><p>1–2 дня · до 100 км — развести костёр и приготовить простой ужин на мангале самостоятельно.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">02</div>
+          <div><h3>Свой лагерь</h3><p>2–3 дня · до 200 км — поставить лагерь без подсказок и сварить уху на костре.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">03</div>
+          <div><h3>Чтение места</h3><p>3 дня · без сети — проложить путь по бумажной карте и выйти к точке без навигатора.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">04</div>
+          <div><h3>Испытание</h3><p>3–4 дня — провести вечер без телефона: час у костра, только тишина и разговор.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">05</div>
+          <div><h3>Автономность</h3><p>4–5 дней — добыть воду из природного источника и отфильтровать её для питья.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">06</div>
+          <div><h3>Экспедиция</h3><p>5+ дней · новый регион — разбить лагерь и наладить быт с нуля там, где нет готовой инфраструктуры.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">07</div>
+          <div><h3>Горы</h3><p>по приглашению · Башкирия — асфальтированный горный серпантин: подняться и спуститься, контролируя скорость на затяжных участках.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">08</div>
+          <div><h3>Броды и ущелья</h3><p>по приглашению — известный неглубокий брод и узкое ущелье, разведанное место, не вслепую.</p></div>
+        </div>
+        <div class="level-item">
+          <div class="level-num mono">09</div>
+          <div><h3>Наставник</h3><p>по приглашению — провести менее опытного человека через маршрут его уровня и передать навыки.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ФИНАЛЬНЫЙ CTA — последний шанс убедить перед футером -->
+  <section class="final-cta">
+    <div class="wrap">
+      <div class="intro-eyebrow" style="opacity:0.6;">не знаешь, с чего начать?</div>
+      <h2>Выбирать особо не из чего — и это хорошо.</h2>
+      <p>Один маршрут, один автомобиль, полностью готовый к выезду. Меньше решений — больше похода.</p>
+      <a href="#booking" class="btn btn-on-dark">забронировать →</a>
+    </div>
+  </section>
+</main>
+
+<!-- МОДАЛЬНОЕ ОКНО — детализация маршрута -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this) closeRoute()">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3 id="modalTitle"></h3>
+        <div class="modal-tagline" id="modalTagline"></div>
+      </div>
+      <button class="modal-close" onclick="closeRoute()">×</button>
+    </div>
+    <div class="modal-meta" id="modalMeta"></div>
+    <div class="modal-map" id="modalMap"></div>
+    <div class="modal-points" id="modalPoints"></div>
+    <div class="modal-schedule" id="modalSchedule"></div>
+    <div class="modal-facts" id="modalFacts"></div>
+    <div class="modal-note" id="modalNote" hidden></div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>© 2026 вне шума · Казань · vneshuma.ru</span>
+    <div class="footer-links">
+      <a href="https://t.me/Talgat_Shakirov" target="_blank" rel="noopener">telegram</a>
+      <a href="https://wa.me/79297250006" target="_blank" rel="noopener">whatsapp</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ПЛАВАЮЩАЯ КНОПКА СВЯЗИ — всегда на виду, снижает трение перед контактом -->
+<a href="https://t.me/Talgat_Shakirov" target="_blank" rel="noopener" class="float-contact">
+  <span class="float-contact-label">Пишите нам</span>
+  <span class="float-contact-icon">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M21.5 3.5L2.5 11l6 2.2m13-9.7L15.8 20l-4.7-6.3m10.4-10.2L9.5 14.3" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </span>
+</a>
+
+<script>
+  // Календарь бронирования — один попап, клик "от", клик "до"
+  (function bookingCalendar(){
+    const MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+    const DOW = ['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'];
+    const display = document.getElementById('datesDisplay');
+    const pop = document.getElementById('calPop');
+    const grid = document.getElementById('calGrid');
+    const dowRow = document.getElementById('calDow');
+    const title = document.getElementById('calTitle');
+    const summary = document.getElementById('calSummary');
+    const dsInput = document.getElementById('dateStart');
+    const deInput = document.getElementById('dateEnd');
+    if (!display) return;
+
+    dowRow.innerHTML = DOW.map(d => `<span>${d}</span>`).join('');
+    let cursor = new Date(); cursor.setDate(1);
+    let start = null, end = null;
+    let bookedRanges = []; // [{start:'YYYY-MM-DD', end:'YYYY-MM-DD'}, ...] — с /api/booked-dates
+
+    function fmt(d) {
+      // Не toISOString() — она конвертирует в UTC и сдвигает дату на день
+      // для часовых поясов восточнее UTC (в т.ч. Казань, МСК+3).
+      const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+    function human(d) { return d.getDate() + ' ' + MONTHS[d.getMonth()]; }
+    function same(a, b) { return a && b && fmt(a) === fmt(b); }
+    function isBooked(date) {
+      const iso = fmt(date);
+      return bookedRanges.some(r => iso >= r.start && iso <= r.end);
+    }
+    function rangeHasBooked(a, b) {
+      const d = new Date(a);
+      while (d <= b) { if (isBooked(d)) return true; d.setDate(d.getDate() + 1); }
+      return false;
+    }
+
+    // Маршруты идут фиксированным числом дней ("2 дня", "7 дней" и т.п.) —
+    // если маршрут выбран, дата окончания достраивается сама по клику на старт.
+    const routeSelect = document.getElementById('route');
+    function routeDuration() {
+      const opt = routeSelect && routeSelect.options[routeSelect.selectedIndex];
+      const m = opt && opt.text.match(/(\d+)\s*(день|дня|дней)/);
+      return m ? parseInt(m[1], 10) : null;
+    }
+
+    fetch('/api/booked-dates').then(r => r.ok ? r.json() : { ranges: [] })
+      .then(data => { bookedRanges = data.ranges || []; render(); })
+      .catch(() => {}); // сеть недоступна — просто без подсветки занятых дней
+
+    function render() {
+      const y = cursor.getFullYear(), m = cursor.getMonth();
+      title.textContent = MONTHS[m] + ' ' + y;
+      const first = new Date(y, m, 1);
+      const startDow = (first.getDay() + 6) % 7;
+      const daysInMonth = new Date(y, m + 1, 0).getDate();
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      let html = '';
+      for (let i = 0; i < startDow; i++) html += '<div class="cal-cell pad"></div>';
+      for (let d = 1; d <= daysInMonth; d++) {
+        const date = new Date(y, m, d);
+        let cls = 'cal-cell';
+        if (date < today) cls += ' past';
+        else if (isBooked(date)) cls += ' booked';
+        else cls += ' avail';
+        if (same(date, start) || same(date, end)) cls += ' sel';
+        else if (start && end && date > start && date < end) cls += ' range';
+        html += `<div class="${cls}" data-date="${fmt(date)}">${d}</div>`;
+      }
+      grid.innerHTML = html;
+      grid.querySelectorAll('.cal-cell.avail, .cal-cell.sel, .cal-cell.range').forEach(el => {
+        el.addEventListener('click', () => pick(el.dataset.date));
+      });
+      const days = routeDuration();
+      if (start && end) {
+        summary.innerHTML = `<strong>${human(start)}</strong> → <strong>${human(end)}</strong>`;
+      } else if (start) {
+        summary.innerHTML = `от <strong>${human(start)}</strong> — выбери дату окончания`;
+      } else if (days) {
+        summary.innerHTML = `маршрут на <strong>${days} ${daysWord(days)}</strong> — выбери дату старта`;
+      } else {
+        summary.textContent = 'выбери дату начала';
+      }
+    }
+
+    function daysWord(n) {
+      const n10 = n % 10, n100 = n % 100;
+      if (n100 >= 11 && n100 <= 14) return 'дней';
+      if (n10 === 1) return 'день';
+      if (n10 >= 2 && n10 <= 4) return 'дня';
+      return 'дней';
+    }
+
+    function applyResult() {
+      dsInput.value = start ? fmt(start) : '';
+      deInput.value = end ? fmt(end) : '';
+      display.value = start && end ? `${human(start)} → ${human(end)}` : (start ? `от ${human(start)}` : '');
+      render();
+    }
+
+    // Маршрут выбран — один клик задаёт и старт, и авто-рассчитанный конец
+    // (старт + длительность маршрута), без отдельного клика на дату окончания.
+    function pickWithDuration(d, days) {
+      const e = new Date(d); e.setDate(e.getDate() + days - 1);
+      if (rangeHasBooked(d, e)) {
+        summary.innerHTML = 'на эти даты уже есть бронь — выбери другой старт';
+        return;
+      }
+      start = d; end = e;
+      applyResult();
+      setTimeout(() => pop.classList.remove('open'), 350);
+    }
+
+    function pick(iso) {
+      const d = new Date(iso + 'T00:00:00');
+      const days = routeDuration();
+
+      if (days) { pickWithDuration(d, days); return; }
+
+      // Маршрут не выбран (или без известной длительности) — прежний ручной
+      // выбор "от" / "до" двумя кликами.
+      if (!start || (start && end)) { start = d; end = null; }
+      else if (d < start) { start = d; end = null; }
+      else if (same(d, start)) { start = null; end = null; }
+      else if (rangeHasBooked(start, d)) {
+        summary.innerHTML = 'на эти даты уже есть бронь — выбери другой диапазон';
+        return;
+      }
+      else { end = d; }
+      applyResult();
+      if (start && end) setTimeout(() => pop.classList.remove('open'), 350);
+    }
+
+    // Смена маршрута: если старт уже выбран — пересчитать конец; в любом
+    // случае перерисовать, чтобы подсказка "маршрут на N дней" обновилась.
+    if (routeSelect) {
+      routeSelect.addEventListener('change', () => {
+        const days = routeDuration();
+        if (start && days) pickWithDuration(start, days);
+        else render();
+      });
+    }
+
+    display.addEventListener('click', (e) => { e.stopPropagation(); pop.classList.toggle('open'); });
+    document.getElementById('calPrev').addEventListener('click', () => { cursor.setMonth(cursor.getMonth() - 1); render(); });
+    document.getElementById('calNext').addEventListener('click', () => { cursor.setMonth(cursor.getMonth() + 1); render(); });
+    document.addEventListener('click', (e) => { if (!pop.contains(e.target) && e.target !== display) pop.classList.remove('open'); });
+    render();
+  })();
+
+  // Бегущая лента фото — дублируем набор один раз для бесшовного цикла,
+  // едем автопрокруткой (requestAnimationFrame), но человек может сам
+  // перетащить мышкой или свайпнуть пальцем — тогда автопрокрутка
+  // приостанавливается и возобновляется через паузу после отпускания.
+  (function photoStrip(){
+    const strip = document.querySelector('.photo-strip');
+    const track = document.getElementById('photoStripTrack');
+    if (!strip || !track) return;
+    const originalHTML = track.innerHTML;
+    track.innerHTML = originalHTML + originalHTML;
+
+    let setWidth = 0;
+    function measure() { setWidth = track.scrollWidth / 2; }
+
+    let autoplay = true;
+    let resumeTimer = null;
+    const SPEED = 0.6; // px за кадр
+
+    function tick() {
+      if (autoplay && setWidth) {
+        strip.scrollLeft += SPEED;
+        if (strip.scrollLeft >= setWidth) strip.scrollLeft -= setWidth;
+      }
+      requestAnimationFrame(tick);
+    }
+
+    // Стартуем анимацию только после того, как ВСЕ фото реально
+    // загрузились — иначе scrollWidth измеряется по недогруженной
+    // ленте, точка "перемотки на начало" уезжает, и ленту дёргает.
+    const imgs = Array.from(track.querySelectorAll('img'));
+    let loaded = 0;
+    function onOneLoaded() {
+      loaded++;
+      if (loaded >= imgs.length) {
+        measure();
+        requestAnimationFrame(tick);
+      }
+    }
+    imgs.forEach(img => {
+      if (img.complete && img.naturalWidth) onOneLoaded();
+      else {
+        img.addEventListener('load', onOneLoaded, { once: true });
+        img.addEventListener('error', onOneLoaded, { once: true });
+      }
+    });
+
+    window.addEventListener('resize', measure);
+
+    function pause() {
+      autoplay = false;
+      clearTimeout(resumeTimer);
+    }
+    function scheduleResume() {
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(() => { autoplay = true; }, 2500);
+    }
+
+    // Перетаскивание мышкой
+    let dragging = false, startX = 0, startScroll = 0;
+    track.addEventListener('mousedown', (e) => {
+      dragging = true;
+      track.classList.add('dragging');
+      startX = e.pageX;
+      startScroll = strip.scrollLeft;
+      pause();
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!dragging) return;
+      strip.scrollLeft = startScroll - (e.pageX - startX);
+    });
+    window.addEventListener('mouseup', () => {
+      if (!dragging) return;
+      dragging = false;
+      track.classList.remove('dragging');
+      if (setWidth) {
+        if (strip.scrollLeft >= setWidth) strip.scrollLeft -= setWidth;
+        else if (strip.scrollLeft < 0) strip.scrollLeft += setWidth;
+      }
+      scheduleResume();
+    });
+
+    // Свайп пальцем — используем нативный скролл контейнера,
+    // просто ставим на паузу автопрокрутку на время касания.
+    strip.addEventListener('touchstart', pause, { passive: true });
+    strip.addEventListener('touchend', scheduleResume, { passive: true });
+
+    strip.addEventListener('wheel', () => { pause(); scheduleResume(); }, { passive: true });
+  })();
+
+  // FAQ — раскрытие по клику, один вопрос за раз необязательно
+  (function faqToggle(){
+    document.querySelectorAll('#faqList .faq-item').forEach(item => {
+      const btn = item.querySelector('.faq-q');
+      btn.addEventListener('click', () => item.classList.toggle('open'));
+    });
+  })();
+
+  // Hero slideshow — автопрокрутка + точки
+  (function heroSlideshow(){
+    const slides = document.querySelectorAll('#heroSlides .hero-slide');
+    const dotsWrap = document.getElementById('heroDots');
+    let idx = 0;
+    slides.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'hero-dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => show(i));
+      dotsWrap.appendChild(dot);
+    });
+    function show(i) {
+      slides[idx].classList.remove('active');
+      dotsWrap.children[idx].classList.remove('active');
+      idx = i;
+      slides[idx].classList.add('active');
+      dotsWrap.children[idx].classList.add('active');
+    }
+    setInterval(() => show((idx + 1) % slides.length), 5500);
+  })();
+
+  // Отправка заявки — на серверную функцию (токен бота не хранится на сайте)
+  const API_URL = '/api/create-booking';
+  const BOT_USERNAME = 'vneshuma_travel_bot';
+
+  function makeBookingId() {
+    const t = Date.now().toString(36).toUpperCase();
+    const r = Math.random().toString(36).slice(2, 6).toUpperCase();
+    return `BID${t}${r}`;
+  }
+
+  document.getElementById('bookingForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const form = e.target;
+    const status = document.getElementById('bookingStatus');
+    const bookingId = makeBookingId();
+    const data = new FormData(form);
+
+    let message = 'ЗАЯВКА · вне шума\n────────────────────────\n\n';
+    message += `телефон: ${data.get('phone')}\n`;
+    message += `маршрут: ${data.get('route') || '—'}\n`;
+    message += `даты: ${data.get('dateStart')} → ${data.get('dateEnd')}\n`;
+    message += `путешественники: ${data.get('pax')}\n`;
+    message += `\n────────────────────────\nID: ${bookingId}`;
+
+    const submitBtn = form.querySelector('button[type=submit]');
+    submitBtn.disabled = true;
+    status.textContent = 'отправляем…';
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, bookingId })
+      });
+      if (!res.ok) throw new Error('server error');
+      status.innerHTML = 'Заявка отправлена — мы свяжемся в течение 15 минут. ' +
+        `<a href="https://t.me/${BOT_USERNAME}?start=${bookingId}" target="_blank" rel="noopener">получить копию в Telegram →</a>`;
+      form.reset();
+    } catch (err) {
+      status.innerHTML = 'Не удалось отправить автоматически. Напиши нам напрямую: ' +
+        '<a href="https://wa.me/79297250006" target="_blank" rel="noopener">WhatsApp</a> или ' +
+        '<a href="https://t.me/Talgat_Shakirov" target="_blank" rel="noopener">Telegram</a>';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  // ═══════════ ДЕТАЛИЗАЦИЯ МАРШРУТОВ: карта + точки ═══════════
+  // Координаты пути и почасовое расписание маршрута «Балымеры» — реальные данные
+  // (перенесены с прежнего сайта). Для 3 маршрутов «паспорта сложности»
+  // проверенных координат пока нет — см. needsCoords.
+  const routesData = {
+    'balymery': { name: 'Балымеры', tagline: 'дубовый лес на террасе над Волгой · курганы Волжской Булгарии', days: '3 дня / 2 ночи', km: 100, price: '30 000 ₽',
+      points: [
+        { name: 'Казань', lat: 55.796127, lng: 49.106414, info: 'Старт маршрута.', tip: 'выезд в 09:00' },
+        { name: 'По трассе вдоль Волги', lat: 55.303248, lng: 50.107272, info: 'Промежуточный участок пути.', tip: '' },
+        { name: 'По трассе вдоль Волги', lat: 54.982239, lng: 49.022628, info: 'Промежуточный участок пути.', tip: '' },
+        { name: 'Подъезд к Балымерам', lat: 54.852319, lng: 48.964229, info: 'Последний участок перед лагерем.', tip: '' },
+        { name: 'Балымеры', lat: 54.826971, lng: 48.989759, info: 'Высокая терраса над Волгой у дубового леса, рядом древние курганы Волжской Булгарии. ~100 км от Казани.', tip: 'ровная площадка, 3–5 минут ходьбы от воды, не в низине', main: true }
+      ],
+      schedule: [
+        { day: 'День 1 — заезд, лагерь, навыки огня', items: [
+          { time: '09:00', title: 'Выезд из Казани' },
+          { time: '11:00', title: 'Прибытие в Балымеры', tip: 'цель маршрута — высокая терраса над Волгой, у дубового леса' },
+          { time: '11:30', title: 'Разбивка лагеря с нуля', tip: 'ровная площадка, не в низине (сырость и холод ночью), не под сухими деревьями, 3–5 минут ходьбы от воды' },
+          { time: '13:00', title: 'Обед', tip: 'полноценное блюдо в казане — шурпа или плов' },
+          { time: '14:00', title: 'Заготовка дров', tip: 'сухое дерево звенит при постукивании. Заготавливаем с запасом сразу на два вечера' },
+          { time: '15:00', title: 'Растопка из берёсты и смолы', tip: 'берёста — лучший природный трут, горит даже во влажном состоянии. Смолу собираем на хвойных' },
+          { time: '16:00', title: 'Финская свеча', tip: 'полено распиливается крест-накрест почти до основания — горит несколько часов ровным пламенем' },
+          { time: '17:00', title: 'Отдых у воды' },
+          { time: '18:00', title: 'Разведение огня', tip: 'начинаем с берёсты и смолы. Сначала спички для уверенности, потом кресало — как более сложный навык' },
+          { time: '19:00', title: 'Ужин на костре', tip: 'картофель в фольге, чай из трав, собранных за день' },
+          { time: '21:00', title: 'Ночное небо', tip: 'съёмка звёздного неба на телефон — длинная выдержка, телефон на упоре' }
+        ]},
+        { day: 'День 2 — разведка, быт, наблюдение за природой', items: [
+          { time: '08:00', title: 'Завтрак у костра', tip: 'гейзерная кофеварка, яичница на сковородке' },
+          { time: '09:00', title: 'Пешая разведка и поиск воды', tip: 'ориентирование по компасу и признакам местности — растения-индикаторы близости воды: осока, ива' },
+          { time: '11:00', title: 'Разнотравье и следы', tip: 'найти минимум 10 растений региона и распознать минимум 3 следа животных' },
+          { time: '13:00', title: 'Обед на костре', tip: 'установка рогатины и перекладины для котелка. Гречка с тушёнкой' },
+          { time: '15:00', title: 'Утепление лагеря на случай похолодания', tip: 'проверка спальников, натяжка тента от дождя и ветра, укрытие дров от сырости' },
+          { time: '16:00', title: 'Птицы и наблюдение', tip: 'бинокль — поиск степного орла и ласточек-береговушек в обрывистых берегах' },
+          { time: '19:00', title: 'Ужин: уха и травяной чай', tip: 'варка ухи на костре. Травяной чай вечером — чтобы не мешать сну' },
+          { time: '20:00', title: 'Резьба ложки', tip: 'спокойное ремесло у костра перед сном' }
+        ]},
+        { day: 'День 3 — сборы и возвращение', items: [
+          { time: '08:00', title: 'Завтрак перед сбором лагеря', tip: 'кофе на гейзерной кофеварке, хлеб на сковородке' },
+          { time: '09:00', title: 'Сбор лагеря', tip: 'мытьё посуды без химии — зола или песок. Кострище: залить водой, убедиться, что зола холодная' },
+          { time: '10:00', title: 'Возвращение в Казань' }
+        ]}
+      ],
+      facts: [
+        'Сезон: конец сентября — октябрь. Короткий световой день, прохладные ночи, нужен утеплённый спальник',
+        'Группа: 2–4 человека',
+        'Рядом — археологические курганы Волжской Булгарии',
+        'Куйбышевское водохранилище: течение у берега в отдельных местах непредсказуемо, безопасные точки для воды — по инструктажу на месте'
+      ]
+    }
+  };
+
+  let currentMap = null;
+
+  function openRoute(id) {
+    const r = routesData[id];
+    if (!r) return;
+    document.getElementById('modalTitle').textContent = r.name;
+    document.getElementById('modalTagline').textContent = r.tagline;
+
+    const meta = document.getElementById('modalMeta');
+    meta.innerHTML = '';
+    if (r.days) meta.innerHTML += `<div><strong>${r.days}</strong>длительность</div>`;
+    if (r.km) meta.innerHTML += `<div><strong>${r.km} км</strong>маршрут</div>`;
+    if (r.price) meta.innerHTML += `<div><strong>${r.price}</strong>пакет</div>`;
+
+    const mapEl = document.getElementById('modalMap');
+    const pointsEl = document.getElementById('modalPoints');
+    const noteEl = document.getElementById('modalNote');
+    pointsEl.innerHTML = '';
+
+    if (r.needsCoords || !r.points.length) {
+      mapEl.style.display = 'none';
+      noteEl.hidden = false;
+      noteEl.textContent = r.desc + ' Точные координаты точек маршрута уточняются — карта появится, как только будет проведена личная разведка.';
+    } else {
+      mapEl.style.display = 'block';
+      noteEl.hidden = true;
+      r.points.forEach((p, i) => {
+        pointsEl.innerHTML += `
+          <div class="modal-point">
+            <div class="modal-point-head">
+              <span class="modal-point-num mono">${String(i + 1).padStart(2, '0')}</span>
+              <span class="modal-point-name">${p.name}${p.main ? ' ★' : ''}</span>
+            </div>
+            <div class="modal-point-info">${p.info}</div>
+            <div class="modal-point-tip">${p.tip}</div>
+          </div>`;
+      });
+    }
+
+    const scheduleEl = document.getElementById('modalSchedule');
+    scheduleEl.innerHTML = '';
+    if (r.schedule) {
+      r.schedule.forEach(day => {
+        scheduleEl.innerHTML += `<div class="schedule-day-title">${day.day}</div>`;
+        day.items.forEach(it => {
+          scheduleEl.innerHTML += `
+            <div class="schedule-item">
+              <div class="schedule-time mono">${it.time}</div>
+              <div>
+                <div class="schedule-title">${it.title}</div>
+                ${it.tip ? `<div class="schedule-tip">${it.tip}</div>` : ''}
+              </div>
+            </div>`;
+        });
+      });
+    }
+
+    const factsEl = document.getElementById('modalFacts');
+    factsEl.innerHTML = '';
+    if (r.facts) {
+      factsEl.innerHTML = '<ul>' + r.facts.map(f => `<li>${f}</li>`).join('') + '</ul>';
+    }
+
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    if (!r.needsCoords && r.points.length) {
+      setTimeout(() => {
+        if (currentMap) { currentMap.remove(); currentMap = null; }
+        currentMap = L.map('modalMap');
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap',
+          maxZoom: 18
+        }).addTo(currentMap);
+        const latlngs = r.points.map(p => [p.lat, p.lng]);
+        r.points.forEach((p, i) => {
+          L.marker([p.lat, p.lng]).addTo(currentMap)
+            .bindPopup(`<b>${i + 1}. ${p.name}</b><br>${p.tip}`);
+        });
+        currentMap.fitBounds(L.latLngBounds(latlngs), { padding: [24, 24] });
+
+        // Прокладываем маршрут по реальным дорогам (OSRM), а не прямой линией
+        L.Routing.control({
+          waypoints: latlngs.map(([lat, lng]) => L.latLng(lat, lng)),
+          routeWhileDragging: false,
+          addWaypoints: false,
+          draggableWaypoints: false,
+          fitSelectedRoutes: false,
+          show: false,
+          createMarker: () => null,
+          lineOptions: { styles: [{ color: '#0A0A0A', weight: 3, opacity: 0.85 }] }
+        }).addTo(currentMap);
+      }, 50);
+    }
+  }
+
+  function closeRoute() {
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow = '';
+    if (currentMap) { currentMap.remove(); currentMap = null; }
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRoute(); });
+</script>
+
+</body>
+</html>
