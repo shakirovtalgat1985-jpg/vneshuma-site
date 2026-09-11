@@ -309,11 +309,35 @@
   .cal-pop.open { display: block; }
   /* БОЛЬШОЙ ВИДИМЫЙ КАЛЕНДАРЬ — не попап, всегда открыт прямо на странице */
   .availability { padding: 100px 0; border-top: 1px solid var(--line); }
-  .cal-inline { display: block !important; position: static; width: 100%; max-width: 460px; margin: 0 auto;
-    box-shadow: none; padding: 32px; }
-  .cal-inline .cal-grid { gap: 6px; }
-  .cal-inline .cal-cell { font-size: 14px; }
-  .cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .cal-inline { display: block !important; position: static; width: 100%; max-width: 680px; margin: 0 auto;
+    box-shadow: none; padding: 32px; border: 1px solid var(--line-strong); text-align: center; }
+  @media (max-width: 640px) { .cal-inline { padding: 20px 16px; } }
+
+  /* ТАБЛИЦА-КАЛЕНДАРЬ — строка маршрута × дни месяца, как в референсе */
+  .cal-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); margin: 20px 0; }
+  .cal-table { display: flex; flex-direction: column; width: max-content; min-width: 100%; }
+  .cal-row { display: flex; }
+  .cal-row + .cal-row { border-top: 1px solid var(--line); }
+  .cal-row-label { flex: 0 0 150px; position: sticky; left: 0; background: var(--bg); z-index: 2;
+    display: flex; align-items: center; padding: 0 16px; font-size: 13px; font-weight: 600; text-align: left; }
+  .cal-header .cal-row-label { background: var(--line); font-weight: 700; }
+  .cal-td { flex: 0 0 44px; display: flex; align-items: center; justify-content: center; padding: 14px 0; font-size: 13px; border-left: 1px solid var(--line); user-select: none; }
+  .cal-td.head { font-weight: 600; }
+  .cal-td.avail { cursor: pointer; }
+  .cal-td.avail:hover { background: var(--line); }
+  .cal-td.booked { background: var(--ink-soft); color: var(--bg); cursor: not-allowed; }
+  .cal-td.past { color: var(--line); cursor: not-allowed; }
+  .cal-td.sel, .cal-td.range { background: var(--ink); color: var(--bg); }
+
+  .cal-legend2 { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; font-size: 13px; color: var(--ink-soft); margin-bottom: 18px; }
+  .cal-legend2 span { display: inline-flex; align-items: center; gap: 8px; }
+  .cal-legend2 i { width: 14px; height: 14px; display: inline-block; border: 1px solid var(--line); }
+  .cal-legend2 i.i-avail { background: var(--bg); }
+  .cal-legend2 i.i-booked { background: var(--ink-soft); border-color: var(--ink-soft); }
+  .cal-legend2 i.i-past { background: var(--line); border-color: var(--line); }
+  .cal-instruction { font-size: 14px; color: var(--ink-soft); margin: 8px 0 22px; }
+
+  .cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   .cal-nav-btn { background: none; border: 1px solid var(--line); width: 28px; height: 28px; cursor: pointer; font-size: 15px; color: var(--ink); }
   .cal-nav-btn:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
   .cal-title { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
@@ -593,19 +617,23 @@
       <p>Живой календарь занятости маршрута «Балымеры» — сразу видно, что свободно.</p>
     </div>
     <input type="hidden" id="route" value="Балымеры · 3 дня / 2 ночи">
-    <div class="cal-pop cal-inline" id="calPop">
+    <div class="cal-inline">
       <div class="cal-nav">
         <button type="button" class="cal-nav-btn" id="calPrev">‹</button>
         <div class="cal-title mono" id="calTitle"></div>
         <button type="button" class="cal-nav-btn" id="calNext">›</button>
       </div>
-      <div class="cal-dow" id="calDow"></div>
-      <div class="cal-grid" id="calGrid"></div>
-      <div class="cal-legend">
-        <span><i class="i-range"></i>выбранные даты</span>
-        <span><i class="i-booked"></i>уже занято</span>
+      <div class="cal-table-wrap">
+        <div class="cal-table" id="calTable"></div>
+      </div>
+      <div class="cal-legend2">
+        <span><i class="i-avail"></i>Свободно · ○</span>
+        <span><i class="i-booked"></i>Занято · ×</span>
+        <span><i class="i-past"></i>Прошедшие даты · —</span>
       </div>
       <div class="cal-summary" id="calSummary">выбери дату начала</div>
+      <p class="cal-instruction">Нажмите на свободную дату, чтобы выбрать маршрут.</p>
+      <a href="#booking" class="btn btn-primary">перейти к заявке →</a>
     </div>
   </section>
 
@@ -832,16 +860,13 @@
     const MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
     const DOW = ['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'];
     const display = document.getElementById('datesDisplay');
-    const pop = document.getElementById('calPop');
-    const grid = document.getElementById('calGrid');
-    const dowRow = document.getElementById('calDow');
+    const table = document.getElementById('calTable');
     const title = document.getElementById('calTitle');
     const summary = document.getElementById('calSummary');
     const dsInput = document.getElementById('dateStart');
     const deInput = document.getElementById('dateEnd');
-    if (!display) return;
+    if (!display || !table) return;
 
-    dowRow.innerHTML = DOW.map(d => `<span>${d}</span>`).join('');
     let cursor = new Date(); cursor.setDate(1);
     let start = null, end = null;
     let bookedRanges = []; // [{start:'YYYY-MM-DD', end:'YYYY-MM-DD'}, ...] — с /api/booked-dates
@@ -882,27 +907,38 @@
       .then(data => { bookedRanges = data.ranges || []; render(); })
       .catch(() => {}); // сеть недоступна — просто без подсветки занятых дней
 
+    // Название строки в таблице-календаре — берём из выбранного маршрута
+    function routeShortName() {
+      if (!routeSelect) return 'Балымеры';
+      const text = routeSelect.tagName === 'SELECT'
+        ? (routeSelect.options[routeSelect.selectedIndex] && routeSelect.options[routeSelect.selectedIndex].text)
+        : routeSelect.value;
+      return (text || 'Балымеры').split('·')[0].trim();
+    }
+
     function render() {
       const y = cursor.getFullYear(), m = cursor.getMonth();
       title.textContent = MONTHS[m] + ' ' + y;
-      const first = new Date(y, m, 1);
-      const startDow = (first.getDay() + 6) % 7;
       const daysInMonth = new Date(y, m + 1, 0).getDate();
       const today = new Date(); today.setHours(0, 0, 0, 0);
-      let html = '';
-      for (let i = 0; i < startDow; i++) html += '<div class="cal-cell pad"></div>';
+
+      let headHtml = '<div class="cal-row cal-header"><div class="cal-row-label"></div>';
+      let dataHtml = `<div class="cal-row"><div class="cal-row-label">${routeShortName()}</div>`;
       for (let d = 1; d <= daysInMonth; d++) {
         const date = new Date(y, m, d);
-        let cls = 'cal-cell';
-        if (date < today) cls += ' past';
-        else if (isBooked(date)) cls += ' booked';
-        else cls += ' avail';
+        headHtml += `<div class="cal-td head">${d}</div>`;
+        let cls = 'cal-td', symbol;
+        if (date < today) { cls += ' past'; symbol = '—'; }
+        else if (isBooked(date)) { cls += ' booked'; symbol = '×'; }
+        else { cls += ' avail'; symbol = '○'; }
         if (same(date, start) || same(date, end)) cls += ' sel';
         else if (start && end && date > start && date < end) cls += ' range';
-        html += `<div class="${cls}" data-date="${fmt(date)}">${d}</div>`;
+        dataHtml += `<div class="${cls}" data-date="${fmt(date)}">${symbol}</div>`;
       }
-      grid.innerHTML = html;
-      grid.querySelectorAll('.cal-cell.avail, .cal-cell.sel, .cal-cell.range').forEach(el => {
+      headHtml += '</div>';
+      dataHtml += '</div>';
+      table.innerHTML = headHtml + dataHtml;
+      table.querySelectorAll('.cal-td.avail, .cal-td.sel, .cal-td.range').forEach(el => {
         el.addEventListener('click', () => pick(el.dataset.date));
       });
       const days = routeDuration();
@@ -942,7 +978,6 @@
       }
       start = d; end = e;
       applyResult();
-      setTimeout(() => pop.classList.remove('open'), 350);
     }
 
     function pick(iso) {
@@ -962,7 +997,6 @@
       }
       else { end = d; }
       applyResult();
-      if (start && end) setTimeout(() => pop.classList.remove('open'), 350);
     }
 
     // Смена маршрута: если старт уже выбран — пересчитать конец; в любом
@@ -975,10 +1009,8 @@
       });
     }
 
-    display.addEventListener('click', (e) => { e.stopPropagation(); pop.classList.toggle('open'); });
     document.getElementById('calPrev').addEventListener('click', () => { cursor.setMonth(cursor.getMonth() - 1); render(); });
     document.getElementById('calNext').addEventListener('click', () => { cursor.setMonth(cursor.getMonth() + 1); render(); });
-    document.addEventListener('click', (e) => { if (!pop.contains(e.target) && e.target !== display) pop.classList.remove('open'); });
     render();
   })();
 

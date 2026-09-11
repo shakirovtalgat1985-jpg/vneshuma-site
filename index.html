@@ -139,6 +139,105 @@
   .process-item h3 { font-size: 17px; margin-bottom: 8px; }
   .process-item p { font-size: 14px; color: var(--ink-soft); }
 
+  /* TOP ANNOUNCEMENT + NAV — липкая полоса сверху, как у референса */
+  .announce { position: sticky; top: 0; z-index: 60; background: var(--ink); color: #fff; }
+  .announce-inner { max-width: 1100px; margin: 0 auto; padding: 10px 32px; display: flex; align-items: center; justify-content: center; gap: 16px; font-size: 12px; letter-spacing: 1px; text-align: center; }
+  @media (max-width: 640px) { .announce-inner { padding: 10px 20px; font-size: 11px; gap: 10px; } }
+  .announce a { text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.5); white-space: nowrap; flex-shrink: 0; }
+
+  /* SITE NAV — настоящее меню под полосой-анонсом, как у референса */
+  .sitenav { position: sticky; top: 33px; z-index: 59; background: var(--bg); border-bottom: 1px solid var(--line); }
+  @media (max-width: 640px) { .sitenav { top: 31px; } }
+  .sitenav-inner { max-width: 1100px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  @media (max-width: 640px) { .sitenav-inner { padding: 14px 20px; } }
+  .sitenav-brand { font-weight: 600; letter-spacing: 3px; text-decoration: none; text-transform: uppercase; font-size: 14px; }
+  .sitenav-links { display: flex; gap: 26px; list-style: none; }
+  .sitenav-links a { text-decoration: none; font-size: 13px; letter-spacing: 0.5px; color: var(--ink-soft); }
+  .sitenav-links a:hover { color: var(--ink); }
+  @media (max-width: 860px) { .sitenav-links { display: none; } }
+
+  /* TAGLINE CTA STRIP — короткий эмоциональный разрыв посреди страницы */
+  .tagline-strip { padding: 80px 0; text-align: center; background: var(--ink); color: #fff; }
+  .tagline-strip .tagline { font-size: clamp(18px, 2.6vw, 26px); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px; }
+  .tagline-strip .tagline span { opacity: 0.35; margin: 0 10px; }
+  .tagline-strip .btn-on-dark { border-color: #fff; background: #fff; color: var(--ink); }
+  .tagline-strip .btn-on-dark:hover { background: transparent; color: #fff; }
+
+  /* BASE / LOCATION — своя база, расстояния до ориентиров */
+  .base { padding: 100px 0; }
+  .base-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  @media (max-width: 860px) { .base-grid { grid-template-columns: 1fr; gap: 40px; } }
+  .base-text p { color: var(--ink-soft); font-size: 15px; max-width: 440px; margin-top: 14px; }
+  .base-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; margin-top: 36px; background: var(--line); }
+  .base-stat { background: var(--bg); padding: 20px; }
+  .base-stat strong { display: block; font-size: 26px; margin-bottom: 4px; }
+  .base-stat span { font-size: 12px; color: var(--ink-soft); letter-spacing: 0.5px; }
+  .base-distances { border-top: 1px solid var(--line); }
+  .base-dist-row { display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .base-dist-row span:first-child { color: var(--ink-soft); }
+  .base-dist-row strong { font-weight: 600; }
+
+  /* STANDARD — философия качества подготовки */
+  .standard { padding: 0 0 100px; text-align: center; }
+  .standard h2 { font-size: clamp(24px, 3.4vw, 34px); max-width: 640px; margin: 0 auto 20px; }
+  .standard p { color: var(--ink-soft); max-width: 560px; margin: 0 auto; font-size: 15px; }
+  .standard .standard-note { margin-top: 26px; font-style: italic; font-size: 15px; color: var(--ink); }
+
+  /* VEHICLE SPEC CARD — единственный авто, полные технические детали */
+  .vehicle { padding: 100px 0; border-top: 1px solid var(--line); }
+  .vehicle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+  @media (max-width: 860px) { .vehicle-grid { grid-template-columns: 1fr; gap: 36px; } }
+  .vehicle-photo { aspect-ratio: 4/3; overflow: hidden; }
+  .vehicle-photo img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85) contrast(1.05); }
+
+  /* КАРТОЧКА АВТО НА БЕЛОМ — как "варианты цвета" у референса, кликабельная */
+  .vehicle-card { background: #fff; border: 1px solid var(--line); padding: 40px 28px 28px; text-align: center; cursor: pointer; transition: box-shadow 0.2s; }
+  .vehicle-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  .vehicle-card img { max-width: 82%; margin: 0 auto 22px; filter: none; }
+  .vehicle-card-name { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .vehicle-card-link { font-size: 13px; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; }
+  .vehicle-name { font-size: clamp(24px, 3vw, 32px); margin-bottom: 6px; }
+  .vehicle-tag { color: var(--ink-soft); font-size: 14px; margin-bottom: 28px; }
+  .vehicle-specs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; border-top: 1px solid var(--line); }
+  .vehicle-spec { padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .vehicle-spec:nth-child(odd) { padding-right: 16px; border-right: 1px solid var(--line); }
+  .vehicle-spec span { display: block; font-size: 12px; color: var(--ink-soft); letter-spacing: 0.5px; margin-bottom: 4px; }
+  .vehicle-spec strong { font-size: 14px; }
+
+  /* INCLUDED — что входит, без доплат */
+  .included { padding: 100px 0; text-align: center; border-top: 1px solid var(--line); }
+  .included-list { max-width: 640px; margin: 44px auto 0; text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--line); }
+  @media (max-width: 560px) { .included-list { grid-template-columns: 1fr; } }
+  .included-item { background: var(--bg); padding: 18px 22px; font-size: 14px; display: flex; align-items: baseline; gap: 10px; }
+  .included-item::before { content: '✓'; color: var(--ink-soft); flex-shrink: 0; }
+  .included-note { margin-top: 34px; font-size: 14px; color: var(--ink-soft); max-width: 480px; margin-left: auto; margin-right: auto; }
+
+  /* UPSELLS — доп. снаряжение за отдельную плату */
+  .upsells { padding: 100px 0; border-top: 1px solid var(--line); }
+  .upsell-list { max-width: 640px; margin: 0 auto; }
+  .upsell-row { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: baseline; padding: 22px 0; border-top: 1px solid var(--line); }
+  .upsell-list .upsell-row:last-child { border-bottom: 1px solid var(--line); }
+  .upsell-row h4 { font-size: 16px; margin-bottom: 4px; }
+  .upsell-row p { font-size: 13px; color: var(--ink-soft); }
+  .upsell-price { font-size: 15px; white-space: nowrap; }
+
+  /* FAQ — раскрывающиеся вопросы */
+  .faq { padding: 100px 0; border-top: 1px solid var(--line); }
+  .faq-list { max-width: 700px; margin: 0 auto; }
+  .faq-item { border-top: 1px solid var(--line); }
+  .faq-list .faq-item:last-child { border-bottom: 1px solid var(--line); }
+  .faq-q { width: 100%; text-align: left; background: none; border: none; font-family: inherit; font-size: 16px; padding: 22px 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 20px; color: var(--ink); }
+  .faq-q-mark { font-size: 18px; color: var(--ink-soft); flex-shrink: 0; transition: transform 0.2s; }
+  .faq-item.open .faq-q-mark { transform: rotate(45deg); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+  .faq-item.open .faq-a { max-height: 400px; }
+  .faq-a p { padding: 0 0 24px; font-size: 14px; color: var(--ink-soft); max-width: 560px; }
+
+  /* FINAL CTA — закрывающий блок перед футером */
+  .final-cta { padding: 120px 0; text-align: center; background: var(--ink); color: #fff; }
+  .final-cta h2 { font-size: clamp(26px, 3.6vw, 38px); margin-bottom: 16px; max-width: 600px; margin-left: auto; margin-right: auto; }
+  .final-cta p { color: rgba(255,255,255,0.65); margin-bottom: 36px; font-size: 15px; }
+
   /* GUIDE — кто ведёт группу, доверие к человеку */
   .guide { padding: 0 0 100px; }
   .guide-card { display: flex; align-items: center; gap: 40px; background: var(--ink); color: #fff; padding: 40px; flex-wrap: wrap; }
@@ -208,7 +307,37 @@
     padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
   }
   .cal-pop.open { display: block; }
-  .cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  /* БОЛЬШОЙ ВИДИМЫЙ КАЛЕНДАРЬ — не попап, всегда открыт прямо на странице */
+  .availability { padding: 100px 0; border-top: 1px solid var(--line); }
+  .cal-inline { display: block !important; position: static; width: 100%; max-width: 680px; margin: 0 auto;
+    box-shadow: none; padding: 32px; border: 1px solid var(--line-strong); text-align: center; }
+  @media (max-width: 640px) { .cal-inline { padding: 20px 16px; } }
+
+  /* ТАБЛИЦА-КАЛЕНДАРЬ — строка маршрута × дни месяца, как в референсе */
+  .cal-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); margin: 20px 0; }
+  .cal-table { display: flex; flex-direction: column; width: max-content; min-width: 100%; }
+  .cal-row { display: flex; }
+  .cal-row + .cal-row { border-top: 1px solid var(--line); }
+  .cal-row-label { flex: 0 0 150px; position: sticky; left: 0; background: var(--bg); z-index: 2;
+    display: flex; align-items: center; padding: 0 16px; font-size: 13px; font-weight: 600; text-align: left; }
+  .cal-header .cal-row-label { background: var(--line); font-weight: 700; }
+  .cal-td { flex: 0 0 44px; display: flex; align-items: center; justify-content: center; padding: 14px 0; font-size: 13px; border-left: 1px solid var(--line); user-select: none; }
+  .cal-td.head { font-weight: 600; }
+  .cal-td.avail { cursor: pointer; }
+  .cal-td.avail:hover { background: var(--line); }
+  .cal-td.booked { background: var(--ink-soft); color: var(--bg); cursor: not-allowed; }
+  .cal-td.past { color: var(--line); cursor: not-allowed; }
+  .cal-td.sel, .cal-td.range { background: var(--ink); color: var(--bg); }
+
+  .cal-legend2 { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; font-size: 13px; color: var(--ink-soft); margin-bottom: 18px; }
+  .cal-legend2 span { display: inline-flex; align-items: center; gap: 8px; }
+  .cal-legend2 i { width: 14px; height: 14px; display: inline-block; border: 1px solid var(--line); }
+  .cal-legend2 i.i-avail { background: var(--bg); }
+  .cal-legend2 i.i-booked { background: var(--ink-soft); border-color: var(--ink-soft); }
+  .cal-legend2 i.i-past { background: var(--line); border-color: var(--line); }
+  .cal-instruction { font-size: 14px; color: var(--ink-soft); margin: 8px 0 22px; }
+
+  .cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   .cal-nav-btn { background: none; border: 1px solid var(--line); width: 28px; height: 28px; cursor: pointer; font-size: 15px; color: var(--ink); }
   .cal-nav-btn:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
   .cal-title { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
@@ -298,6 +427,29 @@
 </head>
 <body>
 
+<!-- ВЕРХНЯЯ ПОЛОСА — липкое напоминание, всегда на виду -->
+<div class="announce">
+  <div class="announce-inner">
+    <span>ВЫЕЗД ИЗ КАЗАНИ · МАРШРУТ «БАЛЫМЕРЫ» · 3 ДНЯ / 2 НОЧИ</span>
+    <a href="#booking">БРОНИРОВАТЬ ›</a>
+  </div>
+</div>
+
+<!-- НАВИГАЦИЯ — настоящее меню по разделам, как у референса -->
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="#" class="sitenav-brand">вне шума</a>
+    <ul class="sitenav-links">
+      <li><a href="#base">о нас</a></li>
+      <li><a href="#process">как это работает</a></li>
+      <li><a href="#vehicle">автомобиль</a></li>
+      <li><a href="#routes">маршрут</a></li>
+      <li><a href="#faq">faq</a></li>
+      <li><a href="#booking">бронирование</a></li>
+    </ul>
+  </div>
+</nav>
+
 <!-- HERO: полноэкранное слайд-шоу, без подписей -->
 <div class="hero-slideshow" id="heroSlides">
   <div class="hero-slide active"><img src="photos/hero-2-10.jpg" alt=""></div>
@@ -329,6 +481,68 @@
     <div class="intro-actions">
       <a href="#routes" class="btn btn-primary">смотреть маршруты</a>
       <a href="#passport" class="btn btn-outline">паспорт сложности</a>
+    </div>
+  </section>
+
+  <!-- ЭМОЦИОНАЛЬНЫЙ РАЗРЫВ — короткая яркая строка посреди страницы -->
+  <section class="tagline-strip">
+    <div class="tagline mono">ОГОНЬ<span>·</span>ТИШИНА<span>·</span>НАВСТРЕЧУ СЕБЕ</div>
+    <a href="#booking" class="btn btn-on-dark">бронировать</a>
+  </section>
+
+  <!-- НАША БАЗА — единственная точка старта, Казань -->
+  <section class="base wrap" id="base">
+    <div class="base-grid">
+      <div class="base-text">
+        <div class="intro-eyebrow" style="text-align:left; margin-bottom:14px;">наша база</div>
+        <h2 style="font-size: clamp(24px, 3.4vw, 34px);">Старт всегда из Казани.</h2>
+        <p>Встречаемся в городе, загружаем снаряжение и выезжаем вместе на подготовленном Jimny. Никаких перелётов между базами — один понятный старт, один маршрут, полная концентрация на нём.</p>
+        <div class="base-stats">
+          <div class="base-stat"><strong>1</strong><span>ЕДИНАЯ БАЗА · КАЗАНЬ</span></div>
+          <div class="base-stat"><strong>~100</strong><span>КМ ДО ЛАГЕРЯ</span></div>
+          <div class="base-stat"><strong>3/2</strong><span>ДНЯ / НОЧИ В ПУТИ</span></div>
+          <div class="base-stat"><strong>09:00</strong><span>ВРЕМЯ СТАРТА</span></div>
+        </div>
+      </div>
+      <div class="base-distances">
+        <div class="base-dist-row"><span>от центра Казани</span><strong>15 мин</strong></div>
+        <div class="base-dist-row"><span>от ж/д вокзала Казань-1</span><strong>20 мин</strong></div>
+        <div class="base-dist-row"><span>от аэропорта Казани</span><strong>35 мин</strong></div>
+        <div class="base-dist-row"><span>до места лагеря «Балымеры»</span><strong>~2 часа в пути</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ФИЛОСОФИЯ ПОДГОТОВКИ — не просто снаряжение, а продуманный стандарт -->
+  <section class="standard wrap">
+    <div class="intro-eyebrow">высокий стандарт</div>
+    <h2>Не просто снаряжение. Продумано.</h2>
+    <p>Большинство прокатов просто собирают набор вещей в багажник. У нас каждый Jimny индивидуально готовится перед выездом: полный привод, зимняя резина по сезону, аптечка, рация, топливо с запасом — и человек, который лично проверяет маршрут перед тем, как повезти вас туда.</p>
+    <p class="standard-note">«Никаких доплат в последний момент. Всё нужное уже включено с самого начала.»</p>
+  </section>
+
+  <!-- ЕДИНСТВЕННЫЙ АВТОМОБИЛЬ — карточка с полными техническими деталями -->
+  <section class="vehicle wrap" id="vehicle">
+    <div class="vehicle-grid">
+      <div class="vehicle-card" onclick="openVehicle()">
+        <img src="photos/vehicle-white.jpg" alt="Suzuki Jimny">
+        <div class="vehicle-card-name">Suzuki Jimny · наш авто</div>
+        <div class="vehicle-card-link">Вид ›</div>
+      </div>
+      <div>
+        <h2 class="vehicle-name">Suzuki Jimny</h2>
+        <div class="vehicle-tag">палатка на крыше · снаряжён для автономного лагеря</div>
+        <div class="vehicle-specs">
+          <div class="vehicle-spec"><span>мест в машине</span><strong>2–4</strong></div>
+          <div class="vehicle-spec"><span>привод</span><strong>полный 4×4</strong></div>
+          <div class="vehicle-spec"><span>топливо</span><strong>бензин, с запасом</strong></div>
+          <div class="vehicle-spec"><span>коробка</span><strong>механика</strong></div>
+          <div class="vehicle-spec"><span>резина</span><strong>по сезону</strong></div>
+          <div class="vehicle-spec"><span>связь</span><strong>рация в комплекте</strong></div>
+          <div class="vehicle-spec"><span>аптечка</span><strong>полная, в машине</strong></div>
+          <div class="vehicle-spec"><span>сопровождение</span><strong>проводник рядом</strong></div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -378,52 +592,126 @@
     </div>
   </section>
 
+  <!-- ЧТО ВКЛЮЧЕНО — без доплат в последний момент -->
+  <section class="included wrap">
+    <div class="intro-eyebrow">что включено</div>
+    <h2 style="font-size: clamp(24px, 3.4vw, 34px); margin-top: 8px;">Полностью укомплектовано. Без доплат.</h2>
+    <div class="included-list">
+      <div class="included-item">Палатка на крыше + спальные места</div>
+      <div class="included-item">Кухня: казан, горелка, посуда</div>
+      <div class="included-item">Топливо и запас на маршрут</div>
+      <div class="included-item">Освещение и организация лагеря</div>
+      <div class="included-item">Стол, стулья, хранение</div>
+      <div class="included-item">Проводник на весь маршрут</div>
+    </div>
+    <p class="included-note">Если хочется добавить что-то к поездке — ниже небольшой список платных дополнений.</p>
+  </section>
+
   <!-- ПАСПОРТ СЛОЖНОСТИ — реальная прогрессия, 9 уровней; здесь — как бонус "куда расти дальше", не барьер перед покупкой -->
   <!-- БРОНИРОВАНИЕ -->
+  <!-- ДОСТУПНОСТЬ — большой видимый календарь прямо на странице, как у референса -->
+  <section class="availability wrap" id="availability">
+    <div class="section-head" style="padding-top:0;">
+      <div class="eyebrow">проверьте доступность</div>
+      <h2>Выберите даты поездки.</h2>
+      <p>Живой календарь занятости маршрута «Балымеры» — сразу видно, что свободно.</p>
+    </div>
+    <input type="hidden" id="route" value="Балымеры · 3 дня / 2 ночи">
+    <div class="cal-inline">
+      <div class="cal-nav">
+        <button type="button" class="cal-nav-btn" id="calPrev">‹</button>
+        <div class="cal-title mono" id="calTitle"></div>
+        <button type="button" class="cal-nav-btn" id="calNext">›</button>
+      </div>
+      <div class="cal-table-wrap">
+        <div class="cal-table" id="calTable"></div>
+      </div>
+      <div class="cal-legend2">
+        <span><i class="i-avail"></i>Свободно · ○</span>
+        <span><i class="i-booked"></i>Занято · ×</span>
+        <span><i class="i-past"></i>Прошедшие даты · —</span>
+      </div>
+      <div class="cal-summary" id="calSummary">выбери дату начала</div>
+      <p class="cal-instruction">Нажмите на свободную дату, чтобы выбрать маршрут.</p>
+      <a href="#booking" class="btn btn-primary">перейти к заявке →</a>
+    </div>
+  </section>
+
   <section class="booking wrap" id="booking">
     <div class="booking-inner">
       <h2>бронирование</h2>
-      <p class="booking-sub">Заполни форму — мы проверим даты и свяжемся в течение 15 минут. Заявка уходит напрямую в Telegram.</p>
+      <p class="booking-sub">Даты выбраны выше? Осталось оставить телефон — свяжемся в течение 15 минут. Заявка уходит напрямую в Telegram.</p>
 
       <form id="bookingForm">
 
         <div class="field"><label>телефон</label><input type="tel" name="phone" placeholder="+7 999 000 00 00" required></div>
 
         <div class="field">
-          <label>маршрут</label>
-          <select name="route" id="route">
-            <option value="">ещё не выбрал — подскажите</option>
-            <option value="Балымеры · 3 дня / 2 ночи">Балымеры · 3 дня / 2 ночи</option>
-          </select>
-        </div>
-
-        <div class="field cal-field">
-          <label>даты поездки</label>
-          <input type="text" id="datesDisplay" readonly placeholder="выбрать даты" autocomplete="off">
+          <label>выбранные даты</label>
+          <input type="text" id="datesDisplay" readonly placeholder="выбери даты в календаре выше" autocomplete="off">
           <input type="hidden" name="dateStart" id="dateStart" required>
           <input type="hidden" name="dateEnd" id="dateEnd" required>
-          <div class="cal-pop" id="calPop">
-            <div class="cal-nav">
-              <button type="button" class="cal-nav-btn" id="calPrev">‹</button>
-              <div class="cal-title mono" id="calTitle"></div>
-              <button type="button" class="cal-nav-btn" id="calNext">›</button>
-            </div>
-            <div class="cal-dow" id="calDow"></div>
-            <div class="cal-grid" id="calGrid"></div>
-            <div class="cal-legend">
-              <span><i class="i-range"></i>выбранные даты</span>
-              <span><i class="i-booked"></i>уже занято</span>
-            </div>
-            <div class="cal-summary" id="calSummary">выбери дату начала</div>
-          </div>
+          <input type="hidden" name="route" value="Балымеры · 3 дня / 2 ночи">
         </div>
 
-        <div class="field-note">путешественники: 2 человека</div>
+        <div class="field-note">маршрут: Балымеры · путешественники: 2 человека</div>
         <input type="hidden" name="pax" value="2 человека">
 
         <button type="submit" class="btn btn-primary">отправить заявку →</button>
         <div class="booking-status" id="bookingStatus"></div>
       </form>
+    </div>
+  </section>
+
+  <!-- ДОПОЛНИТЕЛЬНОЕ СНАРЯЖЕНИЕ — платные допы, образец набора -->
+  <section class="upsells wrap">
+    <div class="section-head" style="padding-top:0;">
+      <div class="eyebrow">дополнительно</div>
+      <h2>Хочешь взять больше?</h2>
+    </div>
+    <div class="upsell-list">
+      <div class="upsell-row">
+        <div><h4>SUP-board</h4><p>Для спокойной воды у лагеря — весло и жилет включены</p></div>
+        <div class="upsell-price mono">+ 2 000 ₽</div>
+      </div>
+      <div class="upsell-row">
+        <div><h4>Дополнительная палатка</h4><p>Если едет больше двух человек или нужно личное пространство</p></div>
+        <div class="upsell-price mono">+ 1 500 ₽</div>
+      </div>
+      <div class="upsell-row">
+        <div><h4>Рация (вторая)</h4><p>Для связи между двумя машинами, если едете компанией</p></div>
+        <div class="upsell-price mono">+ 800 ₽</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ — частые вопросы перед бронированием -->
+  <section class="faq wrap" id="faq">
+    <div class="section-head" style="padding-top:0;">
+      <div class="eyebrow">faq</div>
+      <h2>Частые вопросы</h2>
+    </div>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item">
+        <button type="button" class="faq-q">Нужен ли опыт похода или вождения по бездорожью?<span class="faq-q-mark">+</span></button>
+        <div class="faq-a"><p>Нет. Маршрут рассчитан на новичков — проводник рядом весь маршрут, показывает и объясняет каждый шаг: от розжига костра до постановки лагеря.</p></div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q">Что взять с собой?<span class="faq-q-mark">+</span></button>
+        <div class="faq-a"><p>Личные вещи, одежду по погоде и хорошее настроение. Снаряжение, кухня и топливо — уже в машине. Полный список пришлём при созвоне перед выездом.</p></div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q">Можно ли сдвинуть даты после брони?<span class="faq-q-mark">+</span></button>
+        <div class="faq-a"><p>Да, если сообщить заранее — согласуем свободные даты в календаре.</p></div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q">Сколько человек может поехать?<span class="faq-q-mark">+</span></button>
+        <div class="faq-a"><p>Маршрут «Балымеры» рассчитан на группу 2–4 человека.</p></div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q">Что с погодой и связью на маршруте?<span class="faq-q-mark">+</span></button>
+        <div class="faq-a"><p>Сезон — конец сентября–октябрь, ночи прохладные, нужен тёплый спальник (подскажем при инструктаже). Сотовая связь есть не везде — в машине рация.</p></div>
+      </div>
     </div>
   </section>
 
@@ -487,6 +775,16 @@
       </div>
     </div>
   </section>
+
+  <!-- ФИНАЛЬНЫЙ CTA — последний шанс убедить перед футером -->
+  <section class="final-cta">
+    <div class="wrap">
+      <div class="intro-eyebrow" style="opacity:0.6;">не знаешь, с чего начать?</div>
+      <h2>Выбирать особо не из чего — и это хорошо.</h2>
+      <p>Один маршрут, один автомобиль, полностью готовый к выезду. Меньше решений — больше похода.</p>
+      <a href="#booking" class="btn btn-on-dark">забронировать →</a>
+    </div>
+  </section>
 </main>
 
 <!-- МОДАЛЬНОЕ ОКНО — детализация маршрута -->
@@ -505,6 +803,34 @@
     <div class="modal-schedule" id="modalSchedule"></div>
     <div class="modal-facts" id="modalFacts"></div>
     <div class="modal-note" id="modalNote" hidden></div>
+  </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО — детально про автомобиль, по клику "Вид ›" -->
+<div class="modal-overlay" id="vehicleModal" onclick="if(event.target===this) closeVehicle()">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3>Suzuki Jimny</h3>
+        <div class="modal-tagline">палатка на крыше · снаряжён для автономного лагеря</div>
+      </div>
+      <button class="modal-close" onclick="closeVehicle()">×</button>
+    </div>
+    <div style="padding: 28px; background:#fff;">
+      <img src="photos/vehicle-white.jpg" alt="Suzuki Jimny" style="width:100%; border:1px solid var(--line);">
+    </div>
+    <div class="modal-facts" style="border-top:none;">
+      <ul>
+        <li>Мест в машине: 2–4</li>
+        <li>Привод: полный 4×4</li>
+        <li>Топливо: бензин, с запасом на весь маршрут</li>
+        <li>Коробка: механика</li>
+        <li>Резина: по сезону</li>
+        <li>Связь: рация в комплекте</li>
+        <li>Аптечка: полная, в машине</li>
+        <li>Сопровождение: проводник рядом весь маршрут</li>
+      </ul>
+    </div>
   </div>
 </div>
 
@@ -534,16 +860,13 @@
     const MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
     const DOW = ['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'];
     const display = document.getElementById('datesDisplay');
-    const pop = document.getElementById('calPop');
-    const grid = document.getElementById('calGrid');
-    const dowRow = document.getElementById('calDow');
+    const table = document.getElementById('calTable');
     const title = document.getElementById('calTitle');
     const summary = document.getElementById('calSummary');
     const dsInput = document.getElementById('dateStart');
     const deInput = document.getElementById('dateEnd');
-    if (!display) return;
+    if (!display || !table) return;
 
-    dowRow.innerHTML = DOW.map(d => `<span>${d}</span>`).join('');
     let cursor = new Date(); cursor.setDate(1);
     let start = null, end = null;
     let bookedRanges = []; // [{start:'YYYY-MM-DD', end:'YYYY-MM-DD'}, ...] — с /api/booked-dates
@@ -568,10 +891,15 @@
 
     // Маршруты идут фиксированным числом дней ("2 дня", "7 дней" и т.п.) —
     // если маршрут выбран, дата окончания достраивается сама по клику на старт.
+    // routeSelect может быть и <select>, и скрытым <input value="..."> (v2, один маршрут) —
+    // читаем длительность из строки value в обоих случаях.
     const routeSelect = document.getElementById('route');
     function routeDuration() {
-      const opt = routeSelect && routeSelect.options[routeSelect.selectedIndex];
-      const m = opt && opt.text.match(/(\d+)\s*(день|дня|дней)/);
+      if (!routeSelect) return null;
+      const text = routeSelect.tagName === 'SELECT'
+        ? (routeSelect.options[routeSelect.selectedIndex] && routeSelect.options[routeSelect.selectedIndex].text)
+        : routeSelect.value;
+      const m = text && text.match(/(\d+)\s*(день|дня|дней)/);
       return m ? parseInt(m[1], 10) : null;
     }
 
@@ -579,27 +907,38 @@
       .then(data => { bookedRanges = data.ranges || []; render(); })
       .catch(() => {}); // сеть недоступна — просто без подсветки занятых дней
 
+    // Название строки в таблице-календаре — берём из выбранного маршрута
+    function routeShortName() {
+      if (!routeSelect) return 'Балымеры';
+      const text = routeSelect.tagName === 'SELECT'
+        ? (routeSelect.options[routeSelect.selectedIndex] && routeSelect.options[routeSelect.selectedIndex].text)
+        : routeSelect.value;
+      return (text || 'Балымеры').split('·')[0].trim();
+    }
+
     function render() {
       const y = cursor.getFullYear(), m = cursor.getMonth();
       title.textContent = MONTHS[m] + ' ' + y;
-      const first = new Date(y, m, 1);
-      const startDow = (first.getDay() + 6) % 7;
       const daysInMonth = new Date(y, m + 1, 0).getDate();
       const today = new Date(); today.setHours(0, 0, 0, 0);
-      let html = '';
-      for (let i = 0; i < startDow; i++) html += '<div class="cal-cell pad"></div>';
+
+      let headHtml = '<div class="cal-row cal-header"><div class="cal-row-label"></div>';
+      let dataHtml = `<div class="cal-row"><div class="cal-row-label">${routeShortName()}</div>`;
       for (let d = 1; d <= daysInMonth; d++) {
         const date = new Date(y, m, d);
-        let cls = 'cal-cell';
-        if (date < today) cls += ' past';
-        else if (isBooked(date)) cls += ' booked';
-        else cls += ' avail';
+        headHtml += `<div class="cal-td head">${d}</div>`;
+        let cls = 'cal-td', symbol;
+        if (date < today) { cls += ' past'; symbol = '—'; }
+        else if (isBooked(date)) { cls += ' booked'; symbol = '×'; }
+        else { cls += ' avail'; symbol = '○'; }
         if (same(date, start) || same(date, end)) cls += ' sel';
         else if (start && end && date > start && date < end) cls += ' range';
-        html += `<div class="${cls}" data-date="${fmt(date)}">${d}</div>`;
+        dataHtml += `<div class="${cls}" data-date="${fmt(date)}">${symbol}</div>`;
       }
-      grid.innerHTML = html;
-      grid.querySelectorAll('.cal-cell.avail, .cal-cell.sel, .cal-cell.range').forEach(el => {
+      headHtml += '</div>';
+      dataHtml += '</div>';
+      table.innerHTML = headHtml + dataHtml;
+      table.querySelectorAll('.cal-td.avail, .cal-td.sel, .cal-td.range').forEach(el => {
         el.addEventListener('click', () => pick(el.dataset.date));
       });
       const days = routeDuration();
@@ -639,7 +978,6 @@
       }
       start = d; end = e;
       applyResult();
-      setTimeout(() => pop.classList.remove('open'), 350);
     }
 
     function pick(iso) {
@@ -659,7 +997,6 @@
       }
       else { end = d; }
       applyResult();
-      if (start && end) setTimeout(() => pop.classList.remove('open'), 350);
     }
 
     // Смена маршрута: если старт уже выбран — пересчитать конец; в любом
@@ -672,10 +1009,8 @@
       });
     }
 
-    display.addEventListener('click', (e) => { e.stopPropagation(); pop.classList.toggle('open'); });
     document.getElementById('calPrev').addEventListener('click', () => { cursor.setMonth(cursor.getMonth() - 1); render(); });
     document.getElementById('calNext').addEventListener('click', () => { cursor.setMonth(cursor.getMonth() + 1); render(); });
-    document.addEventListener('click', (e) => { if (!pop.contains(e.target) && e.target !== display) pop.classList.remove('open'); });
     render();
   })();
 
@@ -766,6 +1101,14 @@
     strip.addEventListener('touchend', scheduleResume, { passive: true });
 
     strip.addEventListener('wheel', () => { pause(); scheduleResume(); }, { passive: true });
+  })();
+
+  // FAQ — раскрытие по клику, один вопрос за раз необязательно
+  (function faqToggle(){
+    document.querySelectorAll('#faqList .faq-item').forEach(item => {
+      const btn = item.querySelector('.faq-q');
+      btn.addEventListener('click', () => item.classList.toggle('open'));
+    });
   })();
 
   // Hero slideshow — автопрокрутка + точки
@@ -988,7 +1331,17 @@
     document.body.style.overflow = '';
     if (currentMap) { currentMap.remove(); currentMap = null; }
   }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRoute(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeRoute(); closeVehicle(); } });
+
+  // Модалка "Вид ›" для карточки автомобиля
+  function openVehicle() {
+    document.getElementById('vehicleModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeVehicle() {
+    document.getElementById('vehicleModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
 </script>
 
 </body>
